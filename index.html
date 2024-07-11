@@ -151,7 +151,7 @@
                         const ballSize = Math.max(1, Math.floor(frameWidth * ballSizePercentage));
 
                         // Ограничение размера шаров до 150% от рамки
-                        const maxBallSizePercentage = 3; // Максимум 150% от размера рамки
+                        const maxBallSizePercentage = 1; // Максимум 150% от размера рамки
                         const scaledBallSize = Math.min(frameWidth * maxBallSizePercentage, ballSize) * (imageSizes[index] / 100);
 
                         ball.style.width = `${scaledBallSize}px`;
