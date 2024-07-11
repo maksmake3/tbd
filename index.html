@@ -9,47 +9,44 @@
             margin: 0;
             overflow: hidden;
             background-color: black;
-        }
-        #loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            height: 100vh;
         }
-        #loader {
-            width: 200px;
+        .loader {
+            width: 50%;
+            max-width: 400px;
             height: 20px;
-            border: 2px solid #fff;
-            border-radius: 10px;
+            border: 2px solid white;
+            position: relative;
             overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.1);
         }
-        #progress-bar {
-            width: 0;
+        .loader .progress {
+            width: 0%;
             height: 100%;
-            background-color: #fff;
-            transition: width 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: width 0.5s ease-in-out;
         }
         #frame {
             width: 80%;
-            height: 70vh;
+            height: 80vh; /* Initial frame size */
             margin: auto;
             border: 2px solid gray;
             position: relative;
-            top: 100px;
+            display: none; /* Hide frame initially */
         }
-
         .ball {
             position: absolute;
             background-size: cover;
             border-radius: 50%;
             pointer-events: none;
-            animation: floatAnimation linear infinite;
+            animation: floatAnimation linear infinite, fadeInAnimation 2s forwards; /* Apply fade-in animation */
+            opacity: 0; /* Start with opacity 0 */
         }
         .hitbox {
             position: absolute;
@@ -67,24 +64,31 @@
 
         @keyframes floatAnimation {
             0%, 100% {
-                transform: translate3d(0, 0, 0);
+                transform: translate(0, 0);
             }
             50% {
-                transform: translate3d(10px, 10px, 0);
+                transform: translate(10px, 10px);
+            }
+        }
+
+        @keyframes fadeInAnimation {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
             }
         }
     </style>
 </head>
 <body>
-    <div id="loader-container">
-        <div id="loader">
-            <div id="progress-bar"></div>
-        </div>
+    <div class="loader">
+        <div class="progress" id="progress"></div>
     </div>
     <div id="frame"></div>
     <script>
-        
         const imagePaths = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.png','23.png','24.png','25.png','26.png','27.png','28.png','29.png','30.png','31.png','32.png','33.png','34.png','35.png','36.png','37.png','38.png','39.png','40.png','41.png','42.png','43.png','44.png','45.png','46.png','47.png','48.png','49.png','50.png','51.png','52.png','53.png','54.png','55.png','56.png','57.png','58.png','59.png','60.png','61.png','62.png','63.png','64.png','65.png','66.png','67.png','68.png','69.png','70.png','71.png','72.png','73.png','74.png','75.png','76.png','77.png','78.png','79.png','80.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png'];
+
         const imageSizes = [105, 111, 102, 100, 100, 104, 100, 100, 100, 100, 109, 101, 113, 146, 123, 146, 111, 101, 100, 102, 106, 116, 111, 204, 105, 102, 101, 100, 130, 100, 101, 101, 113, 113, 101, 101, 100, 113, 103, 148, 106, 450, 104, 100, 105, 151, 179, 100, 111, 216, 100, 151, 113, 103, 100, 103, 100, 103, 100, 100, 104, 100, 120, 100, 100, 101, 242, 111, 102, 125, 104, 123, 101, 100, 100, 102, 230, 113, 100, 100, 100, 100, 106, 111, 111, 113, 100, 101, 104];
 
         const hitBoxSizes = [105, 111, 102, 100, 100, 104, 100, 100, 100, 100, 109, 101, 113, 146, 123, 146, 111, 101, 100, 102, 106, 116, 111, 204, 105, 102, 101, 100, 130, 100, 101, 101, 113, 113, 101, 101, 100, 113, 103, 148, 106, 450, 104, 100, 105, 151, 179, 100, 111, 216, 100, 151, 113, 103, 100, 103, 100, 103, 100, 100, 104, 100, 120, 100, 100, 101, 242, 111, 102, 125, 104, 123, 101, 100, 100, 102, 230, 113, 100, 100, 100, 100, 106, 111, 111, 113, 100, 101, 104];
@@ -92,143 +96,145 @@
         const balls = [];
         const ballSpeeds = [];
 
-        function preloadImages(paths, callback) {
-            let loaded = 0;
+        function createFloatingBalls() {
+            const frame = document.getElementById('frame');
+            const loader = document.querySelector('.loader');
+            const progressBar = document.getElementById('progress');
 
-            paths.forEach(path => {
+            let loadedImages = 0;
+            const totalImages = imagePaths.length;
+
+            function loadImage(path, sizeIndex) {
                 const img = new Image();
                 img.onload = () => {
-                    loaded++;
-                    updateLoader((loaded / paths.length) * 100);
+                    loadedImages++;
+                    const progress = Math.floor((loadedImages / totalImages) * 100);
+                    progressBar.style.width = `${progress}%`;
 
-                    if (loaded === paths.length) {
-                        callback();
+                    if (loadedImages === totalImages) {
+                        loader.style.display = 'none';
+                        frame.style.display = 'block';
+                        initializeBalls();
                     }
                 };
                 img.src = path;
-            });
-        }
-
-        function updateLoader(progress) {
-            const progressBar = document.getElementById('progress-bar');
-            progressBar.style.width = `${progress}%`;
-
-            if (progress >= 100) {
-                setTimeout(() => {
-                    const loaderContainer = document.getElementById('loader-container');
-                    loaderContainer.style.display = 'none'; // Hide loader when images are loaded
-                    createFloatingBalls(); // Call function to create floating balls
-                }, 500); // Add a slight delay before hiding loader for visual effect
             }
-        }
-
-        function createFloatingBalls() {
-            const frame = document.getElementById('frame');
-
-            const delayIncrement = 50;
 
             imagePaths.forEach((path, index) => {
-                setTimeout(() => {
-                    const ball = document.createElement('div');
-                    ball.className = 'ball';
-                    ball.style.backgroundImage = `url(${path})`;
-
-                    const frameWidth = frame.clientWidth;
-                    const ballSize = Math.max(1, Math.floor(frameWidth * 0.03));
-                    const scaledBallSize = ballSize * (imageSizes[index] / 100);
-
-                    ball.style.width = `${scaledBallSize}px`;
-                    ball.style.height = `${scaledBallSize}px`;
-
-                    let posX, posY;
-
-                    do {
-                        posX = Math.random() * (frameWidth - scaledBallSize);
-                        posY = Math.random() * (frame.clientHeight - scaledBallSize);
-                    } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
-
-                    ball.style.left = `${posX}px`;
-                    ball.style.top = `${posY}px`;
-
-                    ball.style.opacity = 0;
-
-                    frame.appendChild(ball);
-
-                    let opacity = 0;
-                    const intervalId = setInterval(() => {
-                        opacity += 0.05;
-                        ball.style.opacity = Math.min(opacity, 1);
-
-                        if (opacity >= 1) {
-                            clearInterval(intervalId);
-                        }
-                    }, 50);
-
-                    balls.push(ball);
-                    ballSpeeds.push({
-                        x: Math.random() * 2 - 1,
-                        y: Math.random() * 2 - 1
-                    });
-
-                    const hitbox = document.createElement('div');
-                    hitbox.className = 'hitbox';
-                    hitbox.style.width = `${scaledBallSize}px`;
-                    hitbox.style.height = `${scaledBallSize}px`;
-                    hitbox.style.left = ball.style.left;
-                    hitbox.style.top = ball.style.top;
-
-                    frame.appendChild(hitbox);
-
-                }, index * delayIncrement);
+                loadImage(path, index);
             });
-
-            setInterval(moveBalls, 1000 / 60);
         }
 
-        function applyRandomForce(ballSpeed) {
-            const forceMagnitude = Math.random() * 0.3;
-            const forceAngle = Math.random() * 2 * Math.PI;
+        function initializeBalls() {
+            const frame = document.getElementById('frame');
 
-            ballSpeed.x += forceMagnitude * Math.cos(forceAngle);
-            ballSpeed.y += forceMagnitude * Math.sin(forceAngle);
+            let ballIndex = 0;
+            let batch = 0;
+            const batchSize = 89; // Размер пачки для движения
+
+            function createBatch() {
+                for (let i = 0; i < batchSize && ballIndex < imagePaths.length; i++) {
+                    setTimeout(() => {
+                        const index = ballIndex;
+                        ballIndex++;
+
+                        const ball = document.createElement('div');
+                        ball.className = 'ball';
+                        ball.style.backgroundImage = `url(${imagePaths[index]})`;
+                        ball.style.width = `${imageSizes[index]}px`;
+                        ball.style.height = `${imageSizes[index]}px`;
+                        
+                        // Calculate size relative to frame
+                        const frameWidth = frame.clientWidth;
+                        const frameHeight = frame.clientHeight;
+                        const ballSizePercentage = 0.03; // Примерно 3% от размера рамки
+                        const ballSize = Math.max(1, Math.floor(frameWidth * ballSizePercentage));
+
+                        // Ограничение размера шаров до 150% от рамки
+                        const maxBallSizePercentage = 3; // Максимум 150% от размера рамки
+                        const scaledBallSize = Math.min(frameWidth * maxBallSizePercentage, ballSize) * (imageSizes[index] / 100);
+
+                        ball.style.width = `${scaledBallSize}px`;
+                        ball.style.height = `${scaledBallSize}px`;
+
+                        let posX, posY;
+
+                        // Check for initial position conflicts
+                        do {
+                            posX = Math.random() * (frameWidth - scaledBallSize);
+                            posY = Math.random() * (frameHeight - scaledBallSize);
+                        } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
+
+                        ball.style.left = `${posX}px`;
+                        ball.style.top = `${posY}px`;
+        
+                        const hitbox = document.createElement('div');
+                        hitbox.className = 'hitbox';
+                        hitbox.style.width = `${scaledBallSize}px`;
+                        hitbox.style.height = `${scaledBallSize}px`;
+                        hitbox.style.left = ball.style.left;
+                        hitbox.style.top = ball.style.top;
+
+                        frame.appendChild(ball);
+                        frame.appendChild(hitbox);
+        
+                        balls.push(ball);
+                        ballSpeeds.push({
+                            x: Math.random() * 1 - 0.5, // Random speed in X direction (-0.5 to 0.5)
+                            y: Math.random() * 1 - 0.5  // Random speed in Y direction (-0.5 to 0.5)
+                        });
+                    }, Math.random() * 5000); // Random delay up to 5 seconds
+                }
+
+                batch++;
+                if (batch * batchSize < imagePaths.length) {
+                    setTimeout(createBatch, 1000); // Следующая пачка через 1 секунду
+                }
+            }
+
+            createBatch();
+
+            setInterval(moveBalls, 1000 / 60); // Move balls at 60 frames per second
         }
 
         function moveBalls() {
             const frame = document.getElementById('frame');
 
             balls.forEach((ball, index) => {
-                if (Math.random() < 1 / 60) {
-                    applyRandomForce(ballSpeeds[index]);
-                }
-
                 let posX = parseFloat(ball.style.left);
                 let posY = parseFloat(ball.style.top);
                 const size = parseFloat(ball.style.width);
 
+                // Update position based on speed
                 posX += ballSpeeds[index].x * 0.1;
                 posY += ballSpeeds[index].y * 0.1;
 
+                // Check collision with frame boundaries
                 if (posX <= 0 || posX + size >= frame.clientWidth) {
-                    ballSpeeds[index].x *= -1;
-                    posX = Math.max(0, Math.min(frame.clientWidth - size, posX));
+                    ballSpeeds[index].x *= -1; // Reverse X direction
+                    posX = Math.max(0, Math.min(frame.clientWidth - size, posX)); // Prevent sticking out
                 }
                 if (posY <= 0 || posY + size >= frame.clientHeight) {
-                    ballSpeeds[index].y *= -1;
-                    posY = Math.max(0, Math.min(frame.clientHeight - size, posY));
+                    ballSpeeds[index].y *= -1; // Reverse Y direction
+                    posY = Math.max(0, Math.min(frame.clientHeight - size, posY)); // Prevent sticking out
                 }
 
+                // Update ball position
                 ball.style.left = `${posX}px`;
                 ball.style.top = `${posY}px`;
 
+                // Update hitbox position
                 const hitbox = ball.nextElementSibling;
                 hitbox.style.left = ball.style.left;
                 hitbox.style.top = ball.style.top;
 
+                // Check collisions with other balls
                 for (let i = 0; i < balls.length; i++) {
                     if (i !== index) {
                         const otherBall = balls[i];
                         const otherHitbox = otherBall.nextElementSibling;
 
+                        // If hitboxes overlap, move the ball away from the other hitbox
                         if (checkCollision(hitbox, otherHitbox)) {
                             resolveCollision(ball, ballSpeeds[index], hitbox, otherBall, ballSpeeds[i], otherHitbox);
                         }
@@ -237,6 +243,7 @@
             });
         }
 
+        // Function to check initial position conflicts with other balls
         function checkCollisionWithOtherBalls(posX, posY, size) {
             for (let i = 0; i < balls.length; i++) {
                 const otherBall = balls[i];
@@ -246,6 +253,7 @@
                 const otherPosY = parseFloat(otherBall.style.top);
                 const otherSize = parseFloat(otherBall.style.width);
 
+                // Check if new ball's position conflicts with other ball's hitbox
                 if (
                     posX + size >= otherPosX &&
                     posX <= otherPosX + otherSize &&
@@ -258,6 +266,7 @@
             return false;
         }
 
+        // Function to check collisions between hitbox elements
         function checkCollision(hitbox1, hitbox2) {
             const rect1 = hitbox1.getBoundingClientRect();
             const rect2 = hitbox2.getBoundingClientRect();
@@ -267,7 +276,9 @@
                      rect1.top > rect2.bottom);
         }
 
+        // Handler for collisions between balls
         function resolveCollision(ball1, speed1, hitbox1, ball2, speed2, hitbox2) {
+            // Placeholder collision resolution, swap speeds
             const tempX = speed1.x;
             const tempY = speed1.y;
             speed1.x = speed2.x;
@@ -276,97 +287,9 @@
             speed2.y = tempY;
         }
 
-        preloadImages(imagePaths, () => {
-            // Images are loaded, start creating balls
-            updateLoader(100); // Update loader to 100% instantly
-        });
+        // Call function to create floating balls after images are loaded
+        createFloatingBalls();
 
-        window.addEventListener('resize', () => {
-            const frame = document.getElementById('frame');
-            const frameWidth = frame.clientWidth;
-
-            balls.forEach((ball, index) => {
-                const ballSize = Math.max(1, Math.floor(frameWidth * 0.03));
-                const scaledBallSize = ballSize * (imageSizes[index] / 100);
-
-                ball.style.width = `${scaledBallSize}px`;
-                ball.style.height = `${scaledBallSize}px`;
-
-                let posX, posY;
-
-                do {
-                    posX = Math.random() * (frameWidth - scaledBallSize);
-                    posY = Math.random() * (frame.clientHeight - scaledBallSize);
-                } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
-
-                ball.style.left = `${posX}px`;
-                ball.style.top = `${posY}px`;
-
-                const hitbox = ball.nextElementSibling;
-                hitbox.style.width = `${scaledBallSize}px`;
-                hitbox.style.height = `${scaledBallSize}px`;
-                hitbox.style.left = ball.style.left;
-                hitbox.style.top = ball.style.top;
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const frame = document.getElementById('frame');
-            const frameWidth = frame.clientWidth;
-
-            imagePaths.forEach((path, index) => {
-                const ball = document.createElement('div');
-                ball.className = 'ball';
-                ball.style.backgroundImage = `url(${path})`;
-
-                const ballSize = Math.max(1, Math.floor(frameWidth * 0.03));
-                const scaledBallSize = ballSize * (imageSizes[index] / 100);
-
-                ball.style.width = `${scaledBallSize}px`;
-                ball.style.height = `${scaledBallSize}px`;
-
-                let posX, posY;
-
-                do {
-                    posX = Math.random() * (frameWidth - scaledBallSize);
-                    posY = Math.random() * (frame.clientHeight - scaledBallSize);
-                } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
-
-                ball.style.left = `${posX}px`;
-                ball.style.top = `${posY}px`;
-
-                ball.style.opacity = 0;
-
-                frame.appendChild(ball);
-
-                let opacity = 0;
-                const intervalId = setInterval(() => {
-                    opacity += 0.05;
-                    ball.style.opacity = Math.min(opacity, 1);
-
-                    if (opacity >= 1) {
-                        clearInterval(intervalId);
-                    }
-                }, 50);
-
-                balls.push(ball);
-                ballSpeeds.push({
-                    x: Math.random() * 2 - 1,
-                    y: Math.random() * 2 - 1
-                });
-
-                const hitbox = document.createElement('div');
-                hitbox.className = 'hitbox';
-                hitbox.style.width = `${scaledBallSize}px`;
-                hitbox.style.height = `${scaledBallSize}px`;
-                hitbox.style.left = ball.style.left;
-                hitbox.style.top = ball.style.top;
-
-                frame.appendChild(hitbox);
-            });
-
-            setInterval(moveBalls, 1000 / 60);
-        });
     </script>
 </body>
 </html>
