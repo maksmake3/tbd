@@ -10,26 +10,38 @@
             overflow: hidden;
             background-color: black;
         }
-        #join-counter {
+        #loader-container {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px; /* Фиксированный размер текста */
-            z-index: 1000; /* Поверх остальных элементов */
-            white-space: nowrap; /* Запрет переноса текста на новую строку */
-            overflow: hidden; /* Скрытие выходящего за границы текста */
-            text-overflow: ellipsis; /* Обрезка текста с троеточием, если не помещается */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
+        #loader {
+            width: 200px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            width: 0;
+            height: 100%;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
         #frame {
             width: 80%;
-            height: 70vh; /* Уменьшаем высоту рамки, чтобы она была чуть ниже текста */
+            height: 70vh;
             margin: auto;
             border: 2px solid gray;
             position: relative;
-            top: 100px; /* Сдвигаем рамку ниже на 30px */
+            top: 100px;
         }
 
         .ball {
@@ -46,10 +58,10 @@
             border-radius: 50%;
             pointer-events: none;
             overflow: hidden;
-            box-sizing: border-box; /* Учитываем размеры границы внутри элемента */
-            width: calc(100% - 2px); /* Уменьшаем размер хитбокса на 2px по обеим сторонам */
+            box-sizing: border-box;
+            width: calc(100% - 2px);
             height: calc(100% - 2px);
-            left: 1px; /* Сдвигаем хитбокс влево и вверх, чтобы обводка не выходила за границы шара */
+            left: 1px;
             top: 1px;
         }
 
@@ -64,21 +76,13 @@
     </style>
 </head>
 <body>
-    <div id="join-counter" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: white; font-size: 40px;">К нам присоединились более <span id="project-count">0</span> проектов</div>
+    <div id="loader-container">
+        <div id="loader">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
     <div id="frame"></div>
     <script>
-        const projectCountElement = document.getElementById('project-count');
-        let projectCount = 0;
-        const joinCounter = document.getElementById('join-counter');
-
-        const intervalId = setInterval(() => {
-            projectCount++;
-            projectCountElement.textContent = projectCount;
-            if (projectCount >= 100) {
-                clearInterval(intervalId); // Остановка счетчика после достижения 100
-                joinCounter.style.display = 'block'; // Показать текст счетчика
-            }
-        }, 50); // Примерно каждые 0.5 секунды увеличиваем счетчик проектов
         
         const imagePaths = ['https://github.com/maksmake3/tbd/blob/main/1.png','https://github.com/maksmake3/tbd/blob/main/2.png','https://github.com/maksmake3/tbd/blob/main/3.png','https://github.com/maksmake3/tbd/blob/main/4.png','https://github.com/maksmake3/tbd/blob/main/5.png','https://github.com/maksmake3/tbd/blob/main/6.png','https://github.com/maksmake3/tbd/blob/main/7.png','https://github.com/maksmake3/tbd/blob/main/8.png','https://github.com/maksmake3/tbd/blob/main/9.png','https://github.com/maksmake3/tbd/blob/main/10.png','https://github.com/maksmake3/tbd/blob/main/11.png','https://github.com/maksmake3/tbd/blob/main/12.png','https://github.com/maksmake3/tbd/blob/main/13.png','https://github.com/maksmake3/tbd/blob/main/14.png','https://github.com/maksmake3/tbd/blob/main/15.png','https://github.com/maksmake3/tbd/blob/main/16.png','https://github.com/maksmake3/tbd/blob/main/17.png','https://github.com/maksmake3/tbd/blob/main/18.png','https://github.com/maksmake3/tbd/blob/main/19.png','https://github.com/maksmake3/tbd/blob/main/20.png','https://github.com/maksmake3/tbd/blob/main/21.png','https://github.com/maksmake3/tbd/blob/main/22.png','https://github.com/maksmake3/tbd/blob/main/23.png','https://github.com/maksmake3/tbd/blob/main/24.png','https://github.com/maksmake3/tbd/blob/main/25.png','https://github.com/maksmake3/tbd/blob/main/26.png','https://github.com/maksmake3/tbd/blob/main/27.png','https://github.com/maksmake3/tbd/blob/main/28.png','https://github.com/maksmake3/tbd/blob/main/29.png','https://github.com/maksmake3/tbd/blob/main/30.png','https://github.com/maksmake3/tbd/blob/main/31.png','https://github.com/maksmake3/tbd/blob/main/32.png','https://github.com/maksmake3/tbd/blob/main/33.png','https://github.com/maksmake3/tbd/blob/main/34.png','https://github.com/maksmake3/tbd/blob/main/35.png','https://github.com/maksmake3/tbd/blob/main/36.png','https://github.com/maksmake3/tbd/blob/main/37.png','https://github.com/maksmake3/tbd/blob/main/38.png','https://github.com/maksmake3/tbd/blob/main/39.png','https://github.com/maksmake3/tbd/blob/main/40.png','https://github.com/maksmake3/tbd/blob/main/41.png','https://github.com/maksmake3/tbd/blob/main/42.png','https://github.com/maksmake3/tbd/blob/main/43.png','https://github.com/maksmake3/tbd/blob/main/44.png','https://github.com/maksmake3/tbd/blob/main/45.png','https://github.com/maksmake3/tbd/blob/main/46.png','https://github.com/maksmake3/tbd/blob/main/47.png','https://github.com/maksmake3/tbd/blob/main/48.png','https://github.com/maksmake3/tbd/blob/main/49.png','https://github.com/maksmake3/tbd/blob/main/50.png','https://github.com/maksmake3/tbd/blob/main/51.png','https://github.com/maksmake3/tbd/blob/main/52.png','https://github.com/maksmake3/tbd/blob/main/53.png','https://github.com/maksmake3/tbd/blob/main/54.png','https://github.com/maksmake3/tbd/blob/main/55.png','https://github.com/maksmake3/tbd/blob/main/56.png','https://github.com/maksmake3/tbd/blob/main/57.png','https://github.com/maksmake3/tbd/blob/main/58.png','https://github.com/maksmake3/tbd/blob/main/59.png','https://github.com/maksmake3/tbd/blob/main/60.png','https://github.com/maksmake3/tbd/blob/main/61.png','https://github.com/maksmake3/tbd/blob/main/62.png','https://github.com/maksmake3/tbd/blob/main/63.png','https://github.com/maksmake3/tbd/blob/main/64.png','https://github.com/maksmake3/tbd/blob/main/65.png','https://github.com/maksmake3/tbd/blob/main/66.png','https://github.com/maksmake3/tbd/blob/main/67.png','https://github.com/maksmake3/tbd/blob/main/68.png','https://github.com/maksmake3/tbd/blob/main/69.png','https://github.com/maksmake3/tbd/blob/main/70.png','https://github.com/maksmake3/tbd/blob/main/71.png','https://github.com/maksmake3/tbd/blob/main/72.png','https://github.com/maksmake3/tbd/blob/main/73.png','https://github.com/maksmake3/tbd/blob/main/74.png','https://github.com/maksmake3/tbd/blob/main/75.png','https://github.com/maksmake3/tbd/blob/main/76.png','https://github.com/maksmake3/tbd/blob/main/77.png','https://github.com/maksmake3/tbd/blob/main/78.png','https://github.com/maksmake3/tbd/blob/main/79.png','https://github.com/maksmake3/tbd/blob/main/80.png','https://github.com/maksmake3/tbd/blob/main/81.png','https://github.com/maksmake3/tbd/blob/main/82.png','https://github.com/maksmake3/tbd/blob/main/83.png','м84.png','https://github.com/maksmake3/tbd/blob/main/85.png','https://github.com/maksmake3/tbd/blob/main/86.png','https://github.com/maksmake3/tbd/blob/main/87.png','https://github.com/maksmake3/tbd/blob/main/88.png','https://github.com/maksmake3/tbd/blob/main/89.png'];
 
@@ -89,87 +93,112 @@
         const balls = [];
         const ballSpeeds = [];
 
+        function preloadImages(paths, callback) {
+            let loaded = 0;
+
+            paths.forEach(path => {
+                const img = new Image();
+                img.onload = () => {
+                    loaded++;
+                    updateLoader((loaded / paths.length) * 100);
+
+                    if (loaded === paths.length) {
+                        callback();
+                    }
+                };
+                img.src = path;
+            });
+        }
+
+        function updateLoader(progress) {
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = `${progress}%`;
+
+            if (progress >= 100) {
+                setTimeout(() => {
+                    const loaderContainer = document.getElementById('loader-container');
+                    loaderContainer.style.display = 'none'; // Hide loader when images are loaded
+                    createFloatingBalls(); // Call function to create floating balls
+                }, 500); // Add a slight delay before hiding loader for visual effect
+            }
+        }
+
         function createFloatingBalls() {
-    const frame = document.getElementById('frame');
+            const frame = document.getElementById('frame');
 
-    const delayIncrement = 50; // Задержка между появлением шаров в миллисекундах
-    const maxOpacity = 1; // Максимальная прозрачность шара
+            const delayIncrement = 50;
 
-    imagePaths.forEach((path, index) => {
-        setTimeout(() => {
-            const ball = document.createElement('div');
-            ball.className = 'ball';
-            ball.style.backgroundImage = `url(${path})`;
+            imagePaths.forEach((path, index) => {
+                setTimeout(() => {
+                    const ball = document.createElement('div');
+                    ball.className = 'ball';
+                    ball.style.backgroundImage = `url(${path})`;
 
-            // Вычисление размера шара относительно рамки
-            const frameWidth = frame.clientWidth;
-            const ballSize = Math.max(1, Math.floor(frameWidth * 0.03)); // Размер относительно рамки
-            const scaledBallSize = ballSize * (imageSizes[index] / 100); // Масштабирование в соответствии с размером изображения
+                    const frameWidth = frame.clientWidth;
+                    const ballSize = Math.max(1, Math.floor(frameWidth * 0.03));
+                    const scaledBallSize = ballSize * (imageSizes[index] / 100);
 
-            ball.style.width = `${scaledBallSize}px`;
-            ball.style.height = `${scaledBallSize}px`;
+                    ball.style.width = `${scaledBallSize}px`;
+                    ball.style.height = `${scaledBallSize}px`;
 
-            let posX, posY;
+                    let posX, posY;
 
-            // Проверка конфликтов начальной позиции
-            do {
-                posX = Math.random() * (frameWidth - scaledBallSize);
-                posY = Math.random() * (frame.clientHeight - scaledBallSize);
-            } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
+                    do {
+                        posX = Math.random() * (frameWidth - scaledBallSize);
+                        posY = Math.random() * (frame.clientHeight - scaledBallSize);
+                    } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
 
-            ball.style.left = `${posX}px`;
-            ball.style.top = `${posY}px`;
+                    ball.style.left = `${posX}px`;
+                    ball.style.top = `${posY}px`;
 
-            ball.style.opacity = 0; // Начальная прозрачность
+                    ball.style.opacity = 0;
 
-            frame.appendChild(ball);
+                    frame.appendChild(ball);
 
-            // Постепенное появление шара
-            let opacity = 0;
-            const intervalId = setInterval(() => {
-                opacity += 0.05; // Шаг изменения прозрачности
-                ball.style.opacity = Math.min(opacity, maxOpacity);
+                    let opacity = 0;
+                    const intervalId = setInterval(() => {
+                        opacity += 0.05;
+                        ball.style.opacity = Math.min(opacity, 1);
 
-                if (opacity >= maxOpacity) {
-                    clearInterval(intervalId); // Остановка анимации появления
-                }
-            }, 50); // Шаг времени между изменениями прозрачности
+                        if (opacity >= 1) {
+                            clearInterval(intervalId);
+                        }
+                    }, 50);
 
-            balls.push(ball);
-            ballSpeeds.push({
-                x: Math.random() * 2 - 1, // Случайная скорость в направлении X
-                y: Math.random() * 2 - 1  // Случайная скорость в направлении Y
+                    balls.push(ball);
+                    ballSpeeds.push({
+                        x: Math.random() * 2 - 1,
+                        y: Math.random() * 2 - 1
+                    });
+
+                    const hitbox = document.createElement('div');
+                    hitbox.className = 'hitbox';
+                    hitbox.style.width = `${scaledBallSize}px`;
+                    hitbox.style.height = `${scaledBallSize}px`;
+                    hitbox.style.left = ball.style.left;
+                    hitbox.style.top = ball.style.top;
+
+                    frame.appendChild(hitbox);
+
+                }, index * delayIncrement);
             });
 
-            // Создание хитбокса
-            const hitbox = document.createElement('div');
-            hitbox.className = 'hitbox';
-            hitbox.style.width = `${scaledBallSize}px`;
-            hitbox.style.height = `${scaledBallSize}px`;
-            hitbox.style.left = ball.style.left;
-            hitbox.style.top = ball.style.top;
-
-            frame.appendChild(hitbox);
-
-        }, index * delayIncrement); // Задержка для каждого шара
-    });
-
-    setInterval(moveBalls, 1000 / 60); // Перемещение шаров с частотой 60 кадров в секунду
-}
+            setInterval(moveBalls, 1000 / 60);
+        }
 
         function applyRandomForce(ballSpeed) {
-            const forceMagnitude = Math.random() * 0.5; // Рандомная сила от 0 до 0.5
-            const forceAngle = Math.random() * 2 * Math.PI; // Рандомный угол в радианах
+            const forceMagnitude = Math.random() * 0.5;
+            const forceAngle = Math.random() * 2 * Math.PI;
 
             ballSpeed.x += forceMagnitude * Math.cos(forceAngle);
             ballSpeed.y += forceMagnitude * Math.sin(forceAngle);
         }
+
         function moveBalls() {
             const frame = document.getElementById('frame');
 
             balls.forEach((ball, index) => {
-                // Применяем случайные толчки раз в секунду
-                if (Math.random() < 1 / 60) { // В среднем раз в секунду (60 кадров в секунду)
+                if (Math.random() < 1 / 60) {
                     applyRandomForce(ballSpeeds[index]);
                 }
 
@@ -177,36 +206,30 @@
                 let posY = parseFloat(ball.style.top);
                 const size = parseFloat(ball.style.width);
 
-                // Update position based on speed
                 posX += ballSpeeds[index].x * 0.1;
                 posY += ballSpeeds[index].y * 0.1;
 
-                // Check collision with frame boundaries
                 if (posX <= 0 || posX + size >= frame.clientWidth) {
-                    ballSpeeds[index].x *= -1; // Reverse X direction
-                    posX = Math.max(0, Math.min(frame.clientWidth - size, posX)); // Prevent sticking out
+                    ballSpeeds[index].x *= -1;
+                    posX = Math.max(0, Math.min(frame.clientWidth - size, posX));
                 }
                 if (posY <= 0 || posY + size >= frame.clientHeight) {
-                    ballSpeeds[index].y *= -1; // Reverse Y direction
-                    posY = Math.max(0, Math.min(frame.clientHeight - size, posY)); // Prevent sticking out
+                    ballSpeeds[index].y *= -1;
+                    posY = Math.max(0, Math.min(frame.clientHeight - size, posY));
                 }
 
-                // Update ball position
                 ball.style.left = `${posX}px`;
                 ball.style.top = `${posY}px`;
 
-                // Update hitbox position
                 const hitbox = ball.nextElementSibling;
                 hitbox.style.left = ball.style.left;
                 hitbox.style.top = ball.style.top;
 
-                // Check collisions with other balls
                 for (let i = 0; i < balls.length; i++) {
                     if (i !== index) {
                         const otherBall = balls[i];
                         const otherHitbox = otherBall.nextElementSibling;
 
-                        // If hitboxes overlap, move the ball away from the other hitbox
                         if (checkCollision(hitbox, otherHitbox)) {
                             resolveCollision(ball, ballSpeeds[index], hitbox, otherBall, ballSpeeds[i], otherHitbox);
                         }
@@ -215,7 +238,6 @@
             });
         }
 
-        // Function to check initial position conflicts with other balls
         function checkCollisionWithOtherBalls(posX, posY, size) {
             for (let i = 0; i < balls.length; i++) {
                 const otherBall = balls[i];
@@ -225,7 +247,6 @@
                 const otherPosY = parseFloat(otherBall.style.top);
                 const otherSize = parseFloat(otherBall.style.width);
 
-                // Check if new ball's position conflicts with other ball's hitbox
                 if (
                     posX + size >= otherPosX &&
                     posX <= otherPosX + otherSize &&
@@ -238,7 +259,6 @@
             return false;
         }
 
-        // Функция проверки коллизий между hitbox элементами
         function checkCollision(hitbox1, hitbox2) {
             const rect1 = hitbox1.getBoundingClientRect();
             const rect2 = hitbox2.getBoundingClientRect();
@@ -248,9 +268,7 @@
                      rect1.top > rect2.bottom);
         }
 
-        // Обработчик столкновений между шарами
         function resolveCollision(ball1, speed1, hitbox1, ball2, speed2, hitbox2) {
-            // Placeholder collision resolution, swap speeds
             const tempX = speed1.x;
             const tempY = speed1.y;
             speed1.x = speed2.x;
@@ -259,10 +277,97 @@
             speed2.y = tempY;
         }
 
-        // Вызов функции создания плавающих шаров
-        createFloatingBalls();
+        preloadImages(imagePaths, () => {
+            // Images are loaded, start creating balls
+            updateLoader(100); // Update loader to 100% instantly
+        });
 
+        window.addEventListener('resize', () => {
+            const frame = document.getElementById('frame');
+            const frameWidth = frame.clientWidth;
+
+            balls.forEach((ball, index) => {
+                const ballSize = Math.max(1, Math.floor(frameWidth * 0.03));
+                const scaledBallSize = ballSize * (imageSizes[index] / 100);
+
+                ball.style.width = `${scaledBallSize}px`;
+                ball.style.height = `${scaledBallSize}px`;
+
+                let posX, posY;
+
+                do {
+                    posX = Math.random() * (frameWidth - scaledBallSize);
+                    posY = Math.random() * (frame.clientHeight - scaledBallSize);
+                } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
+
+                ball.style.left = `${posX}px`;
+                ball.style.top = `${posY}px`;
+
+                const hitbox = ball.nextElementSibling;
+                hitbox.style.width = `${scaledBallSize}px`;
+                hitbox.style.height = `${scaledBallSize}px`;
+                hitbox.style.left = ball.style.left;
+                hitbox.style.top = ball.style.top;
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const frame = document.getElementById('frame');
+            const frameWidth = frame.clientWidth;
+
+            imagePaths.forEach((path, index) => {
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                ball.style.backgroundImage = `url(${path})`;
+
+                const ballSize = Math.max(1, Math.floor(frameWidth * 0.03));
+                const scaledBallSize = ballSize * (imageSizes[index] / 100);
+
+                ball.style.width = `${scaledBallSize}px`;
+                ball.style.height = `${scaledBallSize}px`;
+
+                let posX, posY;
+
+                do {
+                    posX = Math.random() * (frameWidth - scaledBallSize);
+                    posY = Math.random() * (frame.clientHeight - scaledBallSize);
+                } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
+
+                ball.style.left = `${posX}px`;
+                ball.style.top = `${posY}px`;
+
+                ball.style.opacity = 0;
+
+                frame.appendChild(ball);
+
+                let opacity = 0;
+                const intervalId = setInterval(() => {
+                    opacity += 0.05;
+                    ball.style.opacity = Math.min(opacity, 1);
+
+                    if (opacity >= 1) {
+                        clearInterval(intervalId);
+                    }
+                }, 50);
+
+                balls.push(ball);
+                ballSpeeds.push({
+                    x: Math.random() * 2 - 1,
+                    y: Math.random() * 2 - 1
+                });
+
+                const hitbox = document.createElement('div');
+                hitbox.className = 'hitbox';
+                hitbox.style.width = `${scaledBallSize}px`;
+                hitbox.style.height = `${scaledBallSize}px`;
+                hitbox.style.left = ball.style.left;
+                hitbox.style.top = ball.style.top;
+
+                frame.appendChild(hitbox);
+            });
+
+            setInterval(moveBalls, 1000 / 60);
+        });
     </script>
 </body>
 </html>
-
