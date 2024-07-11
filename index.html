@@ -1,23 +1,256 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Floating Balls</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        #frame {
+            width: 80%;
+            height: 70vh; /* Уменьшаем высоту рамки, чтобы она была чуть ниже текста */
+            margin: auto;
+            border: 2px solid gray;
+            position: relative;
+            top: 100px; /* Сдвигаем рамку ниже на 30px */
+        }
+
+        .ball {
+            position: absolute;
+            background-size: cover;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatAnimation linear infinite;
+        }
+        .hitbox {
+            position: absolute;
+            background-color: rgba(255, 0, 0, 0);
+            border: 1px solid rgba(255, 255, 255, 0.418);
+            border-radius: 50%;
+            pointer-events: none;
+            overflow: hidden;
+            box-sizing: border-box; /* Учитываем размеры границы внутри элемента */
+            width: calc(100% - 2px); /* Уменьшаем размер хитбокса на 2px по обеим сторонам */
+            height: calc(100% - 2px);
+            left: 1px; /* Сдвигаем хитбокс влево и вверх, чтобы обводка не выходила за границы шара */
+            top: 1px;
+        }
+
+
+
+        @keyframes floatAnimation {
+            0%, 100% {
+                transform: translate3d(0, 0, 0);
+            }
+            50% {
+                transform: translate3d(10px, 10px, 0);
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Welcome to the Floating Balls Page</h1>
-        <div id="container"></div>
-        <div class="info">
-            <h2>Information Section</h2>
-            <p>This is some information at the bottom of the page.</p>
-            <p>Scroll down to read more...</p>
-        </div>
-    </div>
+    <div id="join-counter" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: white; font-size: 40px;">К нам присоединились более <span id="project-count">0</span> проектов</div>
+    <div id="frame"></div>
+    <script>
+        const projectCountElement = document.getElementById('project-count');
+        let projectCount = 0;
+        const joinCounter = document.getElementById('join-counter');
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
-    <script src="script.js"></script>
+        const intervalId = setInterval(() => {
+            projectCount++;
+            projectCountElement.textContent = projectCount;
+            if (projectCount >= 100) {
+                clearInterval(intervalId); // Остановка счетчика после достижения 100
+                joinCounter.style.display = 'block'; // Показать текст счетчика
+            }
+        }, 50); // Примерно каждые 0.5 секунды увеличиваем счетчик проектов
+        
+        const imagePaths = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.png','23.png','24.png','25.png','26.png','27.png','28.png','29.png','30.png','31.png','32.png','33.png','34.png','35.png','36.png','37.png','38.png','39.png','40.png','41.png','42.png','43.png','44.png','45.png','46.png','47.png','48.png','49.png','50.png','51.png','52.png','53.png','54.png','55.png','56.png','57.png','58.png','59.png','60.png','61.png','62.png','63.png','64.png','65.png','66.png','67.png','68.png','69.png','70.png','71.png','72.png','73.png','74.png','75.png','76.png','77.png','78.png','79.png','80.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png'];
+
+        const imageSizes = [105, 111, 102, 100, 100, 104, 100, 100, 100, 100, 109, 101, 113, 146, 123, 146, 111, 101, 100, 102, 106, 116, 111, 204, 105, 102, 101, 100, 130, 100, 101, 101, 113, 113, 101, 101, 100, 113, 103, 148, 106, 450, 104, 100, 105, 151, 179, 100, 111, 216, 100, 151, 113, 103, 100, 103, 100, 103, 100, 100, 104, 100, 120, 100, 100, 101, 242, 111, 102, 125, 104, 123, 101, 100, 100, 102, 230, 113, 100, 100, 100, 100, 106, 111, 111, 113, 100, 101, 104];
+
+        const hitBoxSizes = [105, 111, 102, 100, 100, 104, 100, 100, 100, 100, 109, 101, 113, 146, 123, 146, 111, 101, 100, 102, 106, 116, 111, 204, 105, 102, 101, 100, 130, 100, 101, 101, 113, 113, 101, 101, 100, 113, 103, 148, 106, 450, 104, 100, 105, 151, 179, 100, 111, 216, 100, 151, 113, 103, 100, 103, 100, 103, 100, 100, 104, 100, 120, 100, 100, 101, 242, 111, 102, 125, 104, 123, 101, 100, 100, 102, 230, 113, 100, 100, 100, 100, 106, 111, 111, 113, 100, 101, 104];
+
+        const balls = [];
+        const ballSpeeds = [];
+
+        function createFloatingBalls() {
+    const frame = document.getElementById('frame');
+
+    const delayIncrement = 50; // Задержка между появлением шаров в миллисекундах
+    const maxOpacity = 1; // Максимальная прозрачность шара
+
+    imagePaths.forEach((path, index) => {
+        setTimeout(() => {
+            const ball = document.createElement('div');
+            ball.className = 'ball';
+            ball.style.backgroundImage = `url(${path})`;
+
+            // Вычисление размера шара относительно рамки
+            const frameWidth = frame.clientWidth;
+            const ballSize = Math.max(1, Math.floor(frameWidth * 0.03)); // Размер относительно рамки
+            const scaledBallSize = ballSize * (imageSizes[index] / 100); // Масштабирование в соответствии с размером изображения
+
+            ball.style.width = `${scaledBallSize}px`;
+            ball.style.height = `${scaledBallSize}px`;
+
+            let posX, posY;
+
+            // Проверка конфликтов начальной позиции
+            do {
+                posX = Math.random() * (frameWidth - scaledBallSize);
+                posY = Math.random() * (frame.clientHeight - scaledBallSize);
+            } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
+
+            ball.style.left = `${posX}px`;
+            ball.style.top = `${posY}px`;
+
+            ball.style.opacity = 0; // Начальная прозрачность
+
+            frame.appendChild(ball);
+
+            // Постепенное появление шара
+            let opacity = 0;
+            const intervalId = setInterval(() => {
+                opacity += 0.05; // Шаг изменения прозрачности
+                ball.style.opacity = Math.min(opacity, maxOpacity);
+
+                if (opacity >= maxOpacity) {
+                    clearInterval(intervalId); // Остановка анимации появления
+                }
+            }, 50); // Шаг времени между изменениями прозрачности
+
+            balls.push(ball);
+            ballSpeeds.push({
+                x: Math.random() * 2 - 1, // Случайная скорость в направлении X
+                y: Math.random() * 2 - 1  // Случайная скорость в направлении Y
+            });
+
+            // Создание хитбокса
+            const hitbox = document.createElement('div');
+            hitbox.className = 'hitbox';
+            hitbox.style.width = `${scaledBallSize}px`;
+            hitbox.style.height = `${scaledBallSize}px`;
+            hitbox.style.left = ball.style.left;
+            hitbox.style.top = ball.style.top;
+
+            frame.appendChild(hitbox);
+
+        }, index * delayIncrement); // Задержка для каждого шара
+    });
+
+    setInterval(moveBalls, 1000 / 60); // Перемещение шаров с частотой 60 кадров в секунду
+}
+
+        function applyRandomForce(ballSpeed) {
+            const forceMagnitude = Math.random() * 0.5; // Рандомная сила от 0 до 0.5
+            const forceAngle = Math.random() * 2 * Math.PI; // Рандомный угол в радианах
+
+            ballSpeed.x += forceMagnitude * Math.cos(forceAngle);
+            ballSpeed.y += forceMagnitude * Math.sin(forceAngle);
+        }
+        function moveBalls() {
+            const frame = document.getElementById('frame');
+
+            balls.forEach((ball, index) => {
+                // Применяем случайные толчки раз в секунду
+                if (Math.random() < 1 / 60) { // В среднем раз в секунду (60 кадров в секунду)
+                    applyRandomForce(ballSpeeds[index]);
+                }
+
+                let posX = parseFloat(ball.style.left);
+                let posY = parseFloat(ball.style.top);
+                const size = parseFloat(ball.style.width);
+
+                // Update position based on speed
+                posX += ballSpeeds[index].x * 0.1;
+                posY += ballSpeeds[index].y * 0.1;
+
+                // Check collision with frame boundaries
+                if (posX <= 0 || posX + size >= frame.clientWidth) {
+                    ballSpeeds[index].x *= -1; // Reverse X direction
+                    posX = Math.max(0, Math.min(frame.clientWidth - size, posX)); // Prevent sticking out
+                }
+                if (posY <= 0 || posY + size >= frame.clientHeight) {
+                    ballSpeeds[index].y *= -1; // Reverse Y direction
+                    posY = Math.max(0, Math.min(frame.clientHeight - size, posY)); // Prevent sticking out
+                }
+
+                // Update ball position
+                ball.style.left = `${posX}px`;
+                ball.style.top = `${posY}px`;
+
+                // Update hitbox position
+                const hitbox = ball.nextElementSibling;
+                hitbox.style.left = ball.style.left;
+                hitbox.style.top = ball.style.top;
+
+                // Check collisions with other balls
+                for (let i = 0; i < balls.length; i++) {
+                    if (i !== index) {
+                        const otherBall = balls[i];
+                        const otherHitbox = otherBall.nextElementSibling;
+
+                        // If hitboxes overlap, move the ball away from the other hitbox
+                        if (checkCollision(hitbox, otherHitbox)) {
+                            resolveCollision(ball, ballSpeeds[index], hitbox, otherBall, ballSpeeds[i], otherHitbox);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to check initial position conflicts with other balls
+        function checkCollisionWithOtherBalls(posX, posY, size) {
+            for (let i = 0; i < balls.length; i++) {
+                const otherBall = balls[i];
+                const otherHitbox = otherBall.nextElementSibling;
+
+                const otherPosX = parseFloat(otherBall.style.left);
+                const otherPosY = parseFloat(otherBall.style.top);
+                const otherSize = parseFloat(otherBall.style.width);
+
+                // Check if new ball's position conflicts with other ball's hitbox
+                if (
+                    posX + size >= otherPosX &&
+                    posX <= otherPosX + otherSize &&
+                    posY + size >= otherPosY &&
+                    posY <= otherPosY + otherSize
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Функция проверки коллизий между hitbox элементами
+        function checkCollision(hitbox1, hitbox2) {
+            const rect1 = hitbox1.getBoundingClientRect();
+            const rect2 = hitbox2.getBoundingClientRect();
+            return !(rect1.right < rect2.left ||
+                     rect1.left > rect2.right ||
+                     rect1.bottom < rect2.top ||
+                     rect1.top > rect2.bottom);
+        }
+
+        // Обработчик столкновений между шарами
+        function resolveCollision(ball1, speed1, hitbox1, ball2, speed2, hitbox2) {
+            // Placeholder collision resolution, swap speeds
+            const tempX = speed1.x;
+            const tempY = speed1.y;
+            speed1.x = speed2.x;
+            speed1.y = speed2.y;
+            speed2.x = tempX;
+            speed2.y = tempY;
+        }
+
+        // Вызов функции создания плавающих шаров
+        createFloatingBalls();
+
+    </script>
 </body>
 </html>
