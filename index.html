@@ -10,6 +10,19 @@
             overflow: hidden;
             background-color: black;
         }
+        #join-counter {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px; /* Фиксированный размер текста */
+            z-index: 1000; /* Поверх остальных элементов */
+            white-space: nowrap; /* Запрет переноса текста на новую строку */
+            overflow: hidden; /* Скрытие выходящего за границы текста */
+            text-overflow: ellipsis; /* Обрезка текста с троеточием, если не помещается */
+        }
+
         #frame {
             width: 80%;
             height: 70vh; /* Уменьшаем высоту рамки, чтобы она была чуть ниже текста */
@@ -39,8 +52,6 @@
             left: 1px; /* Сдвигаем хитбокс влево и вверх, чтобы обводка не выходила за границы шара */
             top: 1px;
         }
-
-
 
         @keyframes floatAnimation {
             0%, 100% {
@@ -254,3 +265,4 @@
     </script>
 </body>
 </html>
+
