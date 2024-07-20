@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Floating Balls</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -13,6 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            font-family: 'Roboto', sans-serif;
         }
         .loader {
             width: 50%;
@@ -121,6 +123,112 @@
                 opacity: 1;
             }
         }
+        /* Modal styles */
+        .modal {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed; /* Остается на месте при прокрутке */
+            z-index: 1; /* Находится выше всех элементов */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Включить прокрутку, если нужно */
+            background: rgba(0, 0, 0, 0.4); /* Черный фон с прозрачностью */
+            backdrop-filter: blur(5px); /* Размытие фона */
+            padding-top: 5%; /* Отступ сверху для центрирования по вертикали */
+        }
+        
+        .modal-content {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.9)); /* Полупрозрачный градиент от верхней части окна к нижней */
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%; /* Ширина модального окна 70% от ширины экрана */
+            max-width: 700px; /* Максимальная ширина для больших экранов */
+            box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+            border-radius: 10px; /* Закругленные углы для модального окна */
+        }
+        
+        .modal h2 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .modal .form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .modal .form div {
+            margin: 10px 0;
+            width: 100%;
+        }
+        .modal .form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .modal .form input {
+            padding: 10px;
+            font-size: 14px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .modal .submit-btn {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 20px;
+        }
+        .modal .submit-btn:hover {
+            background-color: #444;
+            color: #fff;
+        }
+        .modal .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .modal .close:hover,
+        .modal .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .role-button {
+            padding: 10px 20px;
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .role-button:hover {
+            background-color: #ddd;
+        }
+
+        #questions-container div {
+            margin: 10px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -137,12 +245,126 @@
         С нами уже более <span id="projects-counter">0</span> проектов
     </div>
     <div class="auth-buttons hidden">
-        <button class="auth-button" onclick="window.location.href='login.html'">Вход</button>
-        <button class="auth-button" onclick="window.location.href='register.html'">Регистрация</button>
+        <button class="auth-button" onclick="openModal('loginModal')">Вход</button>
+        <button class="auth-button" onclick="openModal('registerModal')">Регистрация</button>
     </div>
     <div id="frame" class="hidden"></div>
 
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Вход в систему</h2>
+            <form class="form" id="loginForm">
+                <div>
+                    <label for="login-email">Email:</label>
+                    <input type="email" id="login-email" name="login-email">
+                </div>
+                <div>
+                    <label for="login-password">Пароль:</label>
+                    <input type="password" id="login-password" name="login-password">
+                </div>
+                <button type="submit" class="submit-btn">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Регистрация</h2>
+            <form class="form" id="registerForm">
+                <div class="role-selection">
+                    <label>В качестве кого вы хотите присоединиться:</label>
+                    <button type="button" class="role-button" onclick="selectRole('worker')">Работник</button>
+                    <button type="button" class="role-button" onclick="selectRole('project')">Проект</button>
+                    <button type="button" class="role-button" onclick="selectRole('admin')">Админ</button>
+                </div>
+                <div id="questions-container" class="hidden">
+                    <!-- Вопросы будут добавляться сюда динамически -->
+                </div>
+                <button type="submit" class="submit-btn">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+
     <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        function selectRole(role) {
+            const questionsContainer = document.getElementById('questions-container');
+            questionsContainer.innerHTML = ''; // Очистить предыдущие вопросы
+        
+            if (role === 'worker') {
+                questionsContainer.innerHTML = `
+                    <div>
+                        <label for="tg-contact">Ваш контакт в тг:</label>
+                        <input type="text" id="tg-contact" name="tg-contact">
+                    </div>
+                    <div>
+                        <label for="field">В какой сфере вы работаете?</label>
+                        <input type="text" id="field" name="field">
+                    </div>
+                    <div>
+                        <label for="experience">Какой опыт имеете?</label>
+                        <input type="text" id="experience" name="experience">
+                    </div>
+                    <div>
+                        <label for="portfolio">Ваше портфолио:</label>
+                        <input type="text" id="portfolio" name="portfolio">
+                    </div>
+                `;
+            } else if (role === 'project') {
+                questionsContainer.innerHTML = `
+                    <div>
+                        <label for="tg-contact">Ваш контакт в тг:</label>
+                        <input type="text" id="tg-contact" name="tg-contact">
+                    </div>
+                    <div>
+                        <label for="project-link">Ссылка на ваш проект:</label>
+                        <input type="text" id="project-link" name="project-link">
+                    </div>
+                `;
+            } else if (role === 'admin') {
+                questionsContainer.innerHTML = `
+                    <div>
+                        <label for="tg-contact">Ваш контакт в тг:</label>
+                        <input type="text" id="tg-contact" name="tg-contact">
+                    </div>
+                    <div>
+                        <label for="channel-link">Ссылка на ваш канал:</label>
+                        <input type="text" id="channel-link" name="channel-link">
+                    </div>
+                `;
+            }
+        
+            questionsContainer.classList.remove('hidden'); // Показать контейнер с вопросами
+        }
+
+        // Simulate loading
+        document.addEventListener('DOMContentLoaded', function() {
+            var progress = document.getElementById('progress');
+            var width = 0;
+            var interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    document.querySelector('.loader').style.display = 'none';
+                    document.querySelector('.counter-container').classList.remove('hidden');
+                    document.querySelector('.auth-buttons').classList.remove('hidden');
+                    document.getElementById('frame').style.display = 'block';
+                } else {
+                    width += 1;
+                    progress.style.width = width + '%';
+                }
+            }, 50);
+        });
         function countProjects() {
             const counter = document.getElementById('projects-counter');
             let projectsCount = 0;
@@ -169,6 +391,13 @@
 
         const balls = [];
         const ballSpeeds = [];
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
 
         function createFloatingBalls() {
             const frame = document.getElementById('frame');
