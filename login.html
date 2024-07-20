@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .form div {
+            margin: 10px 0;
+            width: 100%;
+        }
+        .form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form input {
+            padding: 10px;
+            font-size: 14px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background-color: #444;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Вход в систему</h1>
+    <form class="form" id="loginForm">
+        <div>
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login">
+        </div>
+        <div>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <button type="submit" class="submit-btn">Войти</button>
+    </form>
+</body>
+</html>

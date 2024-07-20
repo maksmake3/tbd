@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор роли</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .buttons button {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .buttons button:hover {
+            background-color: #444;
+            color: #fff;
+        }
+        .form {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .form div {
+            margin: 10px 0;
+            width: 100%;
+        }
+        .form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form input {
+            padding: 10px;
+            font-size: 14px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background-color: #444;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>В качестве кого вы хотите присоединиться?</h1>
+    <div class="buttons">
+        <button onclick="showForm('worker')">Работник</button>
+        <button onclick="showForm('project')">Проект</button>
+        <button onclick="showForm('admin')">Админ</button>
+    </div>
+    <form class="form" id="workerForm">
+        <div>
+            <label for="workerLogin">Логин:</label>
+            <input type="text" id="workerLogin" name="workerLogin">
+        </div>
+        <div>
+            <label for="workerPassword">Пароль:</label>
+            <input type="password" id="workerPassword" name="workerPassword">
+        </div>
+        <div>
+            <label for="workerContact">Ваш контакт в ТГ:</label>
+            <input type="text" id="workerContact" name="workerContact">
+        </div>
+        <div>
+            <label for="workerField">В какой сфере вы работаете?</label>
+            <input type="text" id="workerField" name="workerField">
+        </div>
+        <div>
+            <label for="workerExperience">Какой опыт имеете?</label>
+            <input type="text" id="workerExperience" name="workerExperience">
+        </div>
+        <div>
+            <label for="workerPortfolio">Ваше портфолио:</label>
+            <input type="text" id="workerPortfolio" name="workerPortfolio">
+        </div>
+        <button type="submit" class="submit-btn">Отправить</button>
+    </form>
+    <form class="form" id="projectForm">
+        <div>
+            <label for="projectLogin">Логин:</label>
+            <input type="text" id="projectLogin" name="projectLogin">
+        </div>
+        <div>
+            <label for="projectPassword">Пароль:</label>
+            <input type="password" id="projectPassword" name="projectPassword">
+        </div>
+        <div>
+            <label for="projectContact">Ваш контакт в ТГ:</label>
+            <input type="text" id="projectContact" name="projectContact">
+        </div>
+        <div>
+            <label for="projectLink">Ссылка на ваш проект:</label>
+            <input type="text" id="projectLink" name="projectLink">
+        </div>
+        <button type="submit" class="submit-btn">Отправить</button>
+    </form>
+    <form class="form" id="adminForm">
+        <div>
+            <label for="adminLogin">Логин:</label>
+            <input type="text" id="adminLogin" name="adminLogin">
+        </div>
+        <div>
+            <label for="adminPassword">Пароль:</label>
+            <input type="password" id="adminPassword" name="adminPassword">
+        </div>
+        <div>
+            <label for="adminContact">Ваш контакт в ТГ:</label>
+            <input type="text" id="adminContact" name="adminContact">
+        </div>
+        <div>
+            <label for="adminLink">Ссылка на ваш канал:</label>
+            <input type="text" id="adminLink" name="adminLink">
+        </div>
+        <button type="submit" class="submit-btn">Отправить</button>
+    </form>
+    <script>
+        function showForm(role) {
+            document.getElementById('workerForm').style.display = 'none';
+            document.getElementById('projectForm').style.display = 'none';
+            document.getElementById('adminForm').style.display = 'none';
+
+            if (role === 'worker') {
+                document.getElementById('workerForm').style.display = 'flex';
+            } else if (role === 'project') {
+                document.getElementById('projectForm').style.display = 'flex';
+            } else if (role === 'admin') {
+                document.getElementById('adminForm').style.display = 'flex';
+            }
+        }
+    </script>
+</body>
+</html>
