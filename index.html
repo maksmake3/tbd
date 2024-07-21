@@ -139,14 +139,17 @@
         }
         
         .modal-content {
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.9)); /* Полупрозрачный градиент от верхней части окна к нижней */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.9));
             margin: auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 70%; /* Ширина модального окна 70% от ширины экрана */
-            max-width: 700px; /* Максимальная ширина для больших экранов */
-            box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
-            border-radius: 10px; /* Закругленные углы для модального окна */
+            width: 70%;
+            max-width: 700px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .modal h2 {
@@ -155,15 +158,14 @@
             text-align: center;
         }
         .modal .form {
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
-            max-width: 400px;
         }
         .modal .form div {
-            margin: 10px 0;
             width: 100%;
+            margin: 10px 0;
         }
         .modal .form label {
             display: block;
@@ -178,6 +180,7 @@
             border-radius: 8px;
             box-sizing: border-box;
         }
+
         .modal .submit-btn {
             background-color: #fff;
             color: #000;
@@ -189,6 +192,7 @@
             transition: background-color 0.3s, color 0.3s;
             margin-top: 20px;
         }
+
         .modal .submit-btn:hover {
             background-color: #444;
             color: #fff;
@@ -198,13 +202,22 @@
             float: right;
             font-size: 28px;
             font-weight: bold;
+            margin-left: auto;
         }
+
         .modal .close:hover,
         .modal .close:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
         }
+        .role-selection {
+            display: flex;
+            flex-direction: row; /* Горизонтальное расположение */
+            justify-content: center; /* Центрирование кнопок */
+            gap: 10px; /* Пробел между кнопками */
+        }
+
         .role-button {
             padding: 10px 20px;
             background-color: white;
@@ -214,7 +227,7 @@
             font-size: 16px;
             font-weight: bold;
             border-radius: 5px;
-            margin: 5px;
+            margin: 0; /* Убрать отступы вокруг кнопок */
         }
 
         .role-button:hover {
@@ -276,7 +289,6 @@
             <h2>Регистрация</h2>
             <form class="form" id="registerForm">
                 <div class="role-selection">
-                    <label>В качестве кого вы хотите присоединиться:</label>
                     <button type="button" class="role-button" onclick="selectRole('worker')">Работник</button>
                     <button type="button" class="role-button" onclick="selectRole('project')">Проект</button>
                     <button type="button" class="role-button" onclick="selectRole('admin')">Админ</button>
@@ -288,8 +300,6 @@
             </form>
         </div>
     </div>
-
-
     <script>
         function openModal(id) {
             document.getElementById(id).style.display = 'block';
