@@ -430,7 +430,7 @@
             const savedLanguage = localStorage.getItem('language') || 'ru'; // Язык по умолчанию
             document.getElementById('language-select').value = savedLanguage;
             setLanguage(savedLanguage);
-            
+
             // Симуляция загрузки
             var progress = document.getElementById('progress');
             var width = 0;
@@ -441,6 +441,7 @@
                     document.querySelector('.counter-container').classList.remove('hidden');
                     document.querySelector('.auth-buttons').classList.remove('hidden');
                     document.getElementById('frame').style.display = 'block';
+                    document.querySelector('.language-switcher').classList.remove('hidden'); // Показываем переключатель языка
                 } else {
                     width += 1;
                     progress.style.width = width + '%';
@@ -486,11 +487,11 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = "none";
         }
+
         function createFloatingBalls() {
             const frame = document.getElementById('frame');
             const loader = document.querySelector('.loader');
             const progressBar = document.getElementById('progress');
-            const languageSwitcher = document.querySelector('.language-switcher'); // Добавлено
 
             let loadedImages = 0;
             const totalImages = imagePaths.length;
@@ -508,13 +509,12 @@
                         document.querySelectorAll('.hidden').forEach(element => {
                             element.classList.remove('hidden');
                         });
-                        languageSwitcher.classList.remove('hidden'); // Удалено скрытие
                         initializeBalls();
                     }
                 };
                 img.src = path;
             }
-        
+
             imagePaths.forEach((path, index) => {
                 loadImage(path, index);
             });
