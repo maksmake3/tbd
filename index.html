@@ -245,12 +245,12 @@
     </style>
 </head>
 <body>
-    <div class="language-switcher">
+    <div class="language-switcher hidden">
         <select id="language-select" onchange="changeLanguage()">
             <option value="ru" selected>Русский</option>
             <option value="en">English</option>
         </select>
-    </div>
+    </div>    
     <div class="loader">
         <div class="progress" id="progress"></div>
     </div>
@@ -486,11 +486,11 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = "none";
         }
-
         function createFloatingBalls() {
             const frame = document.getElementById('frame');
             const loader = document.querySelector('.loader');
             const progressBar = document.getElementById('progress');
+            const languageSwitcher = document.querySelector('.language-switcher'); // Добавлено
 
             let loadedImages = 0;
             const totalImages = imagePaths.length;
@@ -508,12 +508,13 @@
                         document.querySelectorAll('.hidden').forEach(element => {
                             element.classList.remove('hidden');
                         });
+                        languageSwitcher.classList.remove('hidden'); // Удалено скрытие
                         initializeBalls();
                     }
                 };
                 img.src = path;
             }
-
+        
             imagePaths.forEach((path, index) => {
                 loadImage(path, index);
             });
