@@ -245,7 +245,7 @@
     </style>
 </head>
 <body>
-    <div class="language-switcher hidden">
+    <div class="language-switcher">
         <select id="language-select" onchange="changeLanguage()">
             <option value="ru" selected>Русский</option>
             <option value="en">English</option>
@@ -255,11 +255,11 @@
         <div class="progress" id="progress"></div>
     </div>
     <div class="counter-container hidden">
-        С нами уже более <span id="projects-counter">0</span> проектов
+        <span id="projects-counter">0</span> <span id="projects-text"></span>
     </div>
     <div class="auth-buttons hidden">
-        <button class="auth-button" onclick="openModal('loginModal')">Вход</button>
-        <button class="auth-button" onclick="openModal('registerModal')">Регистрация</button>
+        <button class="auth-button" onclick="openModal('loginModal')"></button>
+        <button class="auth-button" onclick="openModal('registerModal')"></button>
     </div>
     <div id="frame" class="hidden"></div>
 
@@ -267,17 +267,17 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            <h2>Вход в систему</h2>
+            <h2></h2>
             <form class="form" id="loginForm">
                 <div>
-                    <label for="login-email">Email:</label>
+                    <label for="login-email"></label>
                     <input type="email" id="login-email" name="login-email">
                 </div>
                 <div>
-                    <label for="login-password">Пароль:</label>
+                    <label for="login-password"></label>
                     <input type="password" id="login-password" name="login-password">
                 </div>
-                <button type="submit" class="submit-btn">Войти</button>
+                <button type="submit" class="submit-btn"></button>
             </form>
         </div>
     </div>
@@ -286,80 +286,152 @@
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('registerModal')">&times;</span>
-            <h2>Регистрация</h2>
+            <h2></h2>
             <form class="form" id="registerForm">
                 <div class="role-selection">
-                    <button type="button" class="role-button" onclick="selectRole('worker')">Работник</button>
-                    <button type="button" class="role-button" onclick="selectRole('project')">Проект</button>
-                    <button type="button" class="role-button" onclick="selectRole('admin')">Админ</button>
+                    <button type="button" class="role-button" onclick="selectRole('worker')"></button>
+                    <button type="button" class="role-button" onclick="selectRole('project')"></button>
+                    <button type="button" class="role-button" onclick="selectRole('admin')"></button>
                 </div>
                 <div id="questions-container" class="hidden">
                     <!-- Вопросы будут добавляться сюда динамически -->
                 </div>
-                <button type="submit" class="submit-btn">Отправить</button>
+                <button type="submit" class="submit-btn"></button>
             </form>
         </div>
     </div>
+
     <script>
-        function openModal(id) {
-            document.getElementById(id).style.display = 'block';
+        const translations = {
+            ru: {
+                projectsCounter: 'С нами уже более',
+                projectsText: 'проектов',
+                login: 'Вход в систему',
+                email: 'Email:',
+                password: 'Пароль:',
+                loginButton: 'Войти',
+                register: 'Регистрация',
+                roleWorker: 'Работник',
+                roleProject: 'Проект',
+                roleAdmin: 'Админ',
+                tgContact: 'Ваш контакт в тг:',
+                field: 'В какой сфере вы работаете?',
+                experience: 'Какой опыт имеете?',
+                portfolio: 'Ваше портфолио:',
+                projectLink: 'Ссылка на ваш проект:',
+                channelLink: 'Ссылка на ваш канал:',
+                submitButton: 'Отправить'
+            },
+            en: {
+                projectsCounter: 'We have more than',
+                projectsText: 'projects',
+                login: 'Login',
+                email: 'Email:',
+                password: 'Password:',
+                loginButton: 'Login',
+                register: 'Register',
+                roleWorker: 'Worker',
+                roleProject: 'Project',
+                roleAdmin: 'Admin',
+                tgContact: 'Your TG contact:',
+                field: 'In which field do you work?',
+                experience: 'What experience do you have?',
+                portfolio: 'Your portfolio:',
+                projectLink: 'Your project link:',
+                channelLink: 'Your channel link:',
+                submitButton: 'Submit'
+            }
+        };
+
+        let currentProjectsCount = 0;
+        let incrementInterval;
+
+        function changeLanguage() {
+            const selectedLanguage = document.getElementById('language-select').value;
+            localStorage.setItem('language', selectedLanguage);
+            setLanguage(selectedLanguage);
         }
 
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
+        function setLanguage(lang) {
+            const texts = translations[lang] || translations['ru']; // Убедиться, что язык существует
+
+            document.querySelector('.counter-container').innerHTML = `
+                ${texts.projectsCounter} <span id="projects-counter">${currentProjectsCount}</span> ${texts.projectsText}`;
+            document.querySelector('.auth-button:nth-of-type(1)').textContent = texts.loginButton;
+            document.querySelector('.auth-button:nth-of-type(2)').textContent = texts.register;
+            document.querySelector('#loginModal h2').textContent = texts.login;
+            document.querySelector('#loginModal label[for="login-email"]').textContent = texts.email;
+            document.querySelector('#loginModal label[for="login-password"]').textContent = texts.password;
+            document.querySelector('#loginModal .submit-btn').textContent = texts.loginButton;
+            document.querySelector('#registerModal h2').textContent = texts.register;
+            document.querySelector('#registerModal .role-button:nth-of-type(1)').textContent = texts.roleWorker;
+            document.querySelector('#registerModal .role-button:nth-of-type(2)').textContent = texts.roleProject;
+            document.querySelector('#registerModal .role-button:nth-of-type(3)').textContent = texts.roleAdmin;
+            document.querySelector('#questions-container').innerHTML = getQuestionsHtml(lang);
+            document.querySelector('#registerModal .submit-btn').textContent = texts.submitButton;
         }
-        function selectRole(role) {
-            const questionsContainer = document.getElementById('questions-container');
-            questionsContainer.innerHTML = ''; // Очистить предыдущие вопросы
-        
-            if (role === 'worker') {
-                questionsContainer.innerHTML = `
+
+        function getQuestionsHtml(language) {
+            const questions = {
+                worker: `
                     <div>
-                        <label for="tg-contact">Ваш контакт в тг:</label>
+                        <label for="tg-contact">${translations[language].tgContact}</label>
                         <input type="text" id="tg-contact" name="tg-contact">
                     </div>
                     <div>
-                        <label for="field">В какой сфере вы работаете?</label>
+                        <label for="field">${translations[language].field}</label>
                         <input type="text" id="field" name="field">
                     </div>
                     <div>
-                        <label for="experience">Какой опыт имеете?</label>
+                        <label for="experience">${translations[language].experience}</label>
                         <input type="text" id="experience" name="experience">
                     </div>
                     <div>
-                        <label for="portfolio">Ваше портфолио:</label>
+                        <label for="portfolio">${translations[language].portfolio}</label>
                         <input type="text" id="portfolio" name="portfolio">
                     </div>
-                `;
-            } else if (role === 'project') {
-                questionsContainer.innerHTML = `
+                `,
+                project: `
                     <div>
-                        <label for="tg-contact">Ваш контакт в тг:</label>
+                        <label for="tg-contact">${translations[language].tgContact}</label>
                         <input type="text" id="tg-contact" name="tg-contact">
                     </div>
                     <div>
-                        <label for="project-link">Ссылка на ваш проект:</label>
+                        <label for="project-link">${translations[language].projectLink}</label>
                         <input type="text" id="project-link" name="project-link">
                     </div>
-                `;
-            } else if (role === 'admin') {
-                questionsContainer.innerHTML = `
+                `,
+                admin: `
                     <div>
-                        <label for="tg-contact">Ваш контакт в тг:</label>
+                        <label for="tg-contact">${translations[language].tgContact}</label>
                         <input type="text" id="tg-contact" name="tg-contact">
                     </div>
                     <div>
-                        <label for="channel-link">Ссылка на ваш канал:</label>
+                        <label for="channel-link">${translations[language].channelLink}</label>
                         <input type="text" id="channel-link" name="channel-link">
                     </div>
-                `;
-            }
-        
+                `
+            };
+
+            return questions[selectedRole] || '';
+        }
+
+        let selectedRole = '';
+
+        function selectRole(role) {
+            selectedRole = role;
+            const questionsContainer = document.getElementById('questions-container');
+            questionsContainer.innerHTML = getQuestionsHtml(document.getElementById('language-select').value);
             questionsContainer.classList.remove('hidden'); // Показать контейнер с вопросами
         }
 
-        // Simulate loading
+        // Установка языка по умолчанию при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
+            const savedLanguage = localStorage.getItem('language') || 'ru'; // Язык по умолчанию
+            document.getElementById('language-select').value = savedLanguage;
+            setLanguage(savedLanguage);
+            
+            // Симуляция загрузки
             var progress = document.getElementById('progress');
             var width = 0;
             var interval = setInterval(function() {
@@ -375,16 +447,22 @@
                 }
             }, 50);
         });
+
         function countProjects() {
             const counter = document.getElementById('projects-counter');
-            let projectsCount = 0;
-            const incrementInterval = setInterval(() => {
-                projectsCount++;
-                counter.textContent = projectsCount;
-                if (projectsCount >= 100) {
+            if (incrementInterval) {
+                clearInterval(incrementInterval); // Остановить предыдущий интервал
+            }
+
+            incrementInterval = setInterval(() => {
+                if (currentProjectsCount < 100) {
+                    currentProjectsCount++;
+                    counter.textContent = currentProjectsCount;
+                } else {
                     clearInterval(incrementInterval);
-                    counter.textContent = '100';
                 }
+                // Обновить текст при смене языка
+                setLanguage(document.getElementById('language-select').value);
             }, 50); // Изменение каждые 50 миллисекунд
         }
 
