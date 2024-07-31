@@ -1,690 +1,145 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floating Balls</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Responsive Frame</title>
     <style>
         body {
             margin: 0;
-            overflow: hidden;
+            padding: 0;
+            height: 100vh;
             background-color: black;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: 'Roboto', sans-serif;
+            align-items: flex-start;
         }
-        .loader {
-            width: 50%;
-            max-width: 400px;
-            height: 20px;
-            border: 2px solid white;
+
+        .frame {
+            width: 70vw;
+            height: 39.375vw;
+            max-height: 70vh;
+            border: 2px solid gray;
+            margin-top: 100px;
             position: relative;
             overflow: hidden;
-            background-color: rgba(255, 255, 255, 0.1);
         }
-        .loader .progress {
-            width: 0%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.5);
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: width 0.5s ease-in-out;
-        }
-        #frame {
-            width: 80%;
-            height: 80vh; /* Initial frame size */
-            margin: auto;
-            border: 2px solid gray;
-            position: relative;
-            display: none; /* Hide frame initially */
-        }
+
         .ball {
             position: absolute;
-            background-size: cover;
             border-radius: 50%;
-            pointer-events: none;
-            animation: floatAnimation linear infinite, fadeInAnimation 2s forwards; /* Apply fade-in animation */
-            opacity: 0; /* Start with opacity 0 */
-        }
-        .hitbox {
-            position: absolute;
-            background-color: rgba(255, 0, 0, 0);
-            border: 1px solid rgba(255, 255, 255, 0.418);
-            border-radius: 50%;
-            pointer-events: none;
             overflow: hidden;
-            box-sizing: border-box;
-            width: calc(100% - 2px);
-            height: calc(100% - 2px);
-            left: 1px;
-            top: 1px;
-        }
-        .counter-container {
-            position: absolute;
-            top: 10px; /* Расположение сверху от рамки */
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 34px;
-        }
-        .auth-buttons {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             display: flex;
-            gap: 10px;
-        }
-        .auth-button {
-            padding: 10px 20px;
-            background-color: white;
-            color: black;
-            border: none;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
         }
-        .auth-button:hover {
-            background-color: #ddd;
-        }
-        .language-switcher {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: white;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        .language-switcher select {
-            border: none;
-            background-color: transparent;
-            font-size: 16px;
-        }
-        .hidden {
-            display: none;
-        }
-        @keyframes floatAnimation {
-            0%, 100% {
-                transform: translate(0, 0);
-            }
-            50% {
-                transform: translate(10px, 10px);
-            }
-        }
-        @keyframes fadeInAnimation {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        /* Modal styles */
-        .modal {
-            display: none; /* Скрыто по умолчанию */
-            position: fixed; /* Остается на месте при прокрутке */
-            z-index: 1; /* Находится выше всех элементов */
-            left: 0;
-            top: 0;
+
+        .ball img {
             width: 100%;
             height: 100%;
-            overflow: auto; /* Включить прокрутку, если нужно */
-            background: rgba(0, 0, 0, 0.4); /* Черный фон с прозрачностью */
-            backdrop-filter: blur(5px); /* Размытие фона */
-            padding-top: 5%; /* Отступ сверху для центрирования по вертикали */
+            object-fit: cover;
         }
-        
-        .modal-content {
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.9));
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 70%;
-            max-width: 700px;
-            box-sizing: border-box;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .modal h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
-            text-align: center;
-        }
-        .modal .form {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .modal .form div {
-            width: 100%;
-            margin: 10px 0;
-        }
-        .modal .form label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .modal .form input {
-            padding: 10px;
-            font-size: 14px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-
-        .modal .submit-btn {
-            background-color: #fff;
-            color: #000;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 8px;
-            transition: background-color 0.3s, color 0.3s;
-            margin-top: 20px;
-        }
-
-        .modal .submit-btn:hover {
-            background-color: #444;
-            color: #fff;
-        }
-        .modal .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            margin-left: auto;
-        }
-
-        .modal .close:hover,
-        .modal .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .role-selection {
-            display: flex;
-            flex-direction: row; /* Горизонтальное расположение */
-            justify-content: center; /* Центрирование кнопок */
-            gap: 10px; /* Пробел между кнопками */
-        }
-
-        .role-button {
-            padding: 10px 20px;
-            background-color: white;
-            color: black;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            margin: 0; /* Убрать отступы вокруг кнопок */
-        }
-
-        .role-button:hover {
-            background-color: #ddd;
-        }
-
-        #questions-container div {
-            margin: 10px 0;
-        }
-
-        .hidden {
-            display: none;
-        }
-
     </style>
 </head>
 <body>
-    <div class="language-switcher hidden">
-        <select id="language-select" onchange="changeLanguage()">
-            <option value="ru" selected>Русский</option>
-            <option value="en">English</option>
-        </select>
-    </div>    
-    <div class="loader">
-        <div class="progress" id="progress"></div>
-    </div>
-    <div class="counter-container hidden">
-        <span id="projects-counter">0</span> <span id="projects-text"></span>
-    </div>
-    <div class="auth-buttons hidden">
-        <button class="auth-button" onclick="openModal('loginModal')"></button>
-        <button class="auth-button" onclick="openModal('registerModal')"></button>
-    </div>
-    <div id="frame" class="hidden"></div>
+    <div class="frame" id="frame"></div>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
-            <h2></h2>
-            <form class="form" id="loginForm">
-                <div>
-                    <label for="login-email"></label>
-                    <input type="email" id="login-email" name="login-email">
-                </div>
-                <div>
-                    <label for="login-password"></label>
-                    <input type="password" id="login-password" name="login-password">
-                </div>
-                <button type="submit" class="submit-btn"></button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('registerModal')">&times;</span>
-            <h2></h2>
-            <form class="form" id="registerForm">
-                <div class="role-selection">
-                    <button type="button" class="role-button" onclick="selectRole('worker')"></button>
-                    <button type="button" class="role-button" onclick="selectRole('project')"></button>
-                    <button type="button" class="role-button" onclick="selectRole('admin')"></button>
-                </div>
-                <div id="questions-container" class="hidden">
-                    <!-- Вопросы будут добавляться сюда динамически -->
-                </div>
-                <button type="submit" class="submit-btn"></button>
-            </form>
-        </div>
-    </div>
+    <!-- Matter.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
 
     <script>
-        const translations = {
-            ru: {
-                projectsCounter: 'С нами уже более',
-                projectsText: 'проектов',
-                login: 'Вход в систему',
-                email: 'Email:',
-                password: 'Пароль:',
-                loginButton: 'Войти',
-                register: 'Регистрация',
-                roleWorker: 'Работник',
-                roleProject: 'Проект',
-                roleAdmin: 'Админ',
-                tgContact: 'Ваш контакт в тг:',
-                field: 'В какой сфере вы работаете?',
-                experience: 'Какой опыт имеете?',
-                portfolio: 'Ваше портфолио:',
-                projectLink: 'Ссылка на ваш проект:',
-                channelLink: 'Ссылка на ваш канал:',
-                submitButton: 'Отправить'
-            },
-            en: {
-                projectsCounter: 'We have more than',
-                projectsText: 'projects',
-                login: 'Login',
-                email: 'Email:',
-                password: 'Password:',
-                loginButton: 'Login',
-                register: 'Register',
-                roleWorker: 'Worker',
-                roleProject: 'Project',
-                roleAdmin: 'Admin',
-                tgContact: 'Your TG contact:',
-                field: 'In which field do you work?',
-                experience: 'What experience do you have?',
-                portfolio: 'Your portfolio:',
-                projectLink: 'Your project link:',
-                channelLink: 'Your channel link:',
-                submitButton: 'Submit'
-            }
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const { Engine, Render, World, Bodies, Body, Events } = Matter;
 
-        let currentProjectsCount = 0;
-        let incrementInterval;
+            // Create an engine
+            const engine = Engine.create();
+            const world = engine.world;
 
-        function changeLanguage() {
-            const selectedLanguage = document.getElementById('language-select').value;
-            localStorage.setItem('language', selectedLanguage);
-            setLanguage(selectedLanguage);
-        }
-
-        function setLanguage(lang) {
-            const texts = translations[lang] || translations['ru']; // Убедиться, что язык существует
-
-            document.querySelector('.counter-container').innerHTML = `
-                ${texts.projectsCounter} <span id="projects-counter">${currentProjectsCount}</span> ${texts.projectsText}`;
-            document.querySelector('.auth-button:nth-of-type(1)').textContent = texts.loginButton;
-            document.querySelector('.auth-button:nth-of-type(2)').textContent = texts.register;
-            document.querySelector('#loginModal h2').textContent = texts.login;
-            document.querySelector('#loginModal label[for="login-email"]').textContent = texts.email;
-            document.querySelector('#loginModal label[for="login-password"]').textContent = texts.password;
-            document.querySelector('#loginModal .submit-btn').textContent = texts.loginButton;
-            document.querySelector('#registerModal h2').textContent = texts.register;
-            document.querySelector('#registerModal .role-button:nth-of-type(1)').textContent = texts.roleWorker;
-            document.querySelector('#registerModal .role-button:nth-of-type(2)').textContent = texts.roleProject;
-            document.querySelector('#registerModal .role-button:nth-of-type(3)').textContent = texts.roleAdmin;
-            document.querySelector('#questions-container').innerHTML = getQuestionsHtml(lang);
-            document.querySelector('#registerModal .submit-btn').textContent = texts.submitButton;
-        }
-
-        function getQuestionsHtml(language) {
-            const questions = {
-                worker: `
-                    <div>
-                        <label for="tg-contact">${translations[language].tgContact}</label>
-                        <input type="text" id="tg-contact" name="tg-contact">
-                    </div>
-                    <div>
-                        <label for="field">${translations[language].field}</label>
-                        <input type="text" id="field" name="field">
-                    </div>
-                    <div>
-                        <label for="experience">${translations[language].experience}</label>
-                        <input type="text" id="experience" name="experience">
-                    </div>
-                    <div>
-                        <label for="portfolio">${translations[language].portfolio}</label>
-                        <input type="text" id="portfolio" name="portfolio">
-                    </div>
-                `,
-                project: `
-                    <div>
-                        <label for="tg-contact">${translations[language].tgContact}</label>
-                        <input type="text" id="tg-contact" name="tg-contact">
-                    </div>
-                    <div>
-                        <label for="project-link">${translations[language].projectLink}</label>
-                        <input type="text" id="project-link" name="project-link">
-                    </div>
-                `,
-                admin: `
-                    <div>
-                        <label for="tg-contact">${translations[language].tgContact}</label>
-                        <input type="text" id="tg-contact" name="tg-contact">
-                    </div>
-                    <div>
-                        <label for="channel-link">${translations[language].channelLink}</label>
-                        <input type="text" id="channel-link" name="channel-link">
-                    </div>
-                `
-            };
-
-            return questions[selectedRole] || '';
-        }
-
-        let selectedRole = '';
-
-        function selectRole(role) {
-            selectedRole = role;
-            const questionsContainer = document.getElementById('questions-container');
-            questionsContainer.innerHTML = getQuestionsHtml(document.getElementById('language-select').value);
-            questionsContainer.classList.remove('hidden'); // Показать контейнер с вопросами
-        }
-
-        // Установка языка по умолчанию при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedLanguage = localStorage.getItem('language') || 'ru'; // Язык по умолчанию
-            document.getElementById('language-select').value = savedLanguage;
-            setLanguage(savedLanguage);
-
-            // Симуляция загрузки
-            var progress = document.getElementById('progress');
-            var width = 0;
-            var interval = setInterval(function() {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    document.querySelector('.loader').style.display = 'none';
-                    document.querySelector('.counter-container').classList.remove('hidden');
-                    document.querySelector('.auth-buttons').classList.remove('hidden');
-                    document.getElementById('frame').style.display = 'block';
-                    document.querySelector('.language-switcher').classList.remove('hidden'); // Показываем переключатель языка
-                } else {
-                    width += 1;
-                    progress.style.width = width + '%';
-                }
-            }, 50);
-        });
-
-        function countProjects() {
-            const counter = document.getElementById('projects-counter');
-            if (incrementInterval) {
-                clearInterval(incrementInterval); // Остановить предыдущий интервал
-            }
-
-            incrementInterval = setInterval(() => {
-                if (currentProjectsCount < 100) {
-                    currentProjectsCount++;
-                    counter.textContent = currentProjectsCount;
-                } else {
-                    clearInterval(incrementInterval);
-                }
-                // Обновить текст при смене языка
-                setLanguage(document.getElementById('language-select').value);
-            }, 50); // Изменение каждые 50 миллисекунд
-        }
-
-        // Вызов функции после появления рамки и адаптации экрана
-        window.onload = () => {
-            countProjects();
-        };
-        
-        const imagePaths = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.png','23.png','24.png','25.png','26.png','27.png','28.png','29.png','30.png','31.png','32.png','33.png','34.png','35.png','36.png','37.png','38.png','39.png','40.png','41.png','42.png','43.png','44.png','45.png','46.png','47.png','48.png','49.png','50.png','51.png','52.png','53.png','54.png','55.png','56.png','57.png','58.png','59.png','60.png','61.png','62.png','63.png','64.png','65.png','66.png','67.png','68.png','69.png','70.png','71.png','72.png','73.png','74.png','75.png','76.png','77.png','78.png','79.png','80.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png'];
-
-        const imageSizes = [105, 111, 102, 100, 100, 104, 100, 100, 100, 100, 109, 101, 113, 146, 123, 146, 111, 101, 100, 102, 106, 116, 111, 204, 105, 102, 101, 100, 130, 100, 101, 101, 113, 113, 101, 101, 100, 113, 103, 148, 106, 450, 104, 100, 105, 151, 179, 100, 111, 216, 100, 151, 113, 103, 100, 103, 100, 103, 100, 100, 104, 100, 120, 100, 100, 101, 242, 111, 102, 125, 104, 123, 101, 100, 100, 102, 230, 113, 100, 100, 100, 100, 106, 111, 111, 113, 100, 101, 104];
-
-        const hitBoxSizes = [105, 111, 102, 100, 100, 104, 100, 100, 100, 100, 109, 101, 113, 146, 123, 146, 111, 101, 100, 102, 106, 116, 111, 204, 105, 102, 101, 100, 130, 100, 101, 101, 113, 113, 101, 101, 100, 113, 103, 148, 106, 450, 104, 100, 105, 151, 179, 100, 111, 216, 100, 151, 113, 103, 100, 103, 100, 103, 100, 100, 104, 100, 120, 100, 100, 101, 242, 111, 102, 125, 104, 123, 101, 100, 100, 102, 230, 113, 100, 100, 100, 100, 106, 111, 111, 113, 100, 101, 104];
-
-        const balls = [];
-        const ballSpeeds = [];
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = "none";
-        }
-
-        function createFloatingBalls() {
+            // Create a renderer
             const frame = document.getElementById('frame');
-            const loader = document.querySelector('.loader');
-            const progressBar = document.getElementById('progress');
+            const frameWidth = frame.clientWidth;
+            const frameHeight = frame.clientHeight;
 
-            let loadedImages = 0;
-            const totalImages = imagePaths.length;
-
-            function loadImage(path, sizeIndex) {
-                const img = new Image();
-                img.onload = () => {
-                    loadedImages++;
-                    const progress = Math.floor((loadedImages / totalImages) * 100);
-                    progressBar.style.width = `${progress}%`;
-                
-                    if (loadedImages === totalImages) {
-                        loader.style.display = 'none';
-                        frame.style.display = 'block';
-                        document.querySelectorAll('.hidden').forEach(element => {
-                            element.classList.remove('hidden');
-                        });
-                        initializeBalls();
-                    }
-                };
-                img.src = path;
-            }
-
-            imagePaths.forEach((path, index) => {
-                loadImage(path, index);
+            const render = Render.create({
+                element: frame,
+                engine: engine,
+                options: {
+                    width: frameWidth,
+                    height: frameHeight,
+                    wireframes: false,
+                    background: 'black'
+                }
             });
-        }
 
-        function initializeBalls() {
-            const frame = document.getElementById('frame');
+            Render.run(render);
 
-            let ballIndex = 0;
-            let batch = 0;
-            const batchSize = 89; // Размер пачки для движения
+            // Add boundaries
+            const boundaries = [
+                Bodies.rectangle(frameWidth / 2, 0, frameWidth, 10, { isStatic: true }), // top
+                Bodies.rectangle(frameWidth / 2, frameHeight, frameWidth, 10, { isStatic: true }), // bottom
+                Bodies.rectangle(0, frameHeight / 2, 10, frameHeight, { isStatic: true }), // left
+                Bodies.rectangle(frameWidth, frameHeight / 2, 10, frameHeight, { isStatic: true }) // right
+            ];
+            World.add(world, boundaries);
 
-            function createBatch() {
-                for (let i = 0; i < batchSize && ballIndex < imagePaths.length; i++) {
-                    setTimeout(() => {
-                        const index = ballIndex;
-                        ballIndex++;
-
-                        const ball = document.createElement('div');
-                        ball.className = 'ball';
-                        ball.style.backgroundImage = `url(${imagePaths[index]})`;
-                        ball.style.width = `${imageSizes[index]}px`;
-                        ball.style.height = `${imageSizes[index]}px`;
-                        
-                        // Calculate size relative to frame
-                        const frameWidth = frame.clientWidth;
-                        const frameHeight = frame.clientHeight;
-                        const ballSizePercentage = 0.03; // Примерно 3% от размера рамки
-                        const ballSize = Math.max(1, Math.floor(frameWidth * ballSizePercentage));
-
-                        // Ограничение размера шаров до 150% от рамки
-                        const maxBallSizePercentage = 1; // Максимум 150% от размера рамки
-                        const scaledBallSize = Math.min(frameWidth * maxBallSizePercentage, ballSize) * (imageSizes[index] / 100);
-
-                        ball.style.width = `${scaledBallSize}px`;
-                        ball.style.height = `${scaledBallSize}px`;
-
-                        let posX, posY;
-
-                        // Check for initial position conflicts
-                        do {
-                            posX = Math.random() * (frameWidth - scaledBallSize);
-                            posY = Math.random() * (frameHeight - scaledBallSize);
-                        } while (checkCollisionWithOtherBalls(posX, posY, scaledBallSize));
-
-                        ball.style.left = `${posX}px`;
-                        ball.style.top = `${posY}px`;
-        
-                        const hitbox = document.createElement('div');
-                        hitbox.className = 'hitbox';
-                        hitbox.style.width = `${scaledBallSize}px`;
-                        hitbox.style.height = `${scaledBallSize}px`;
-                        hitbox.style.left = ball.style.left;
-                        hitbox.style.top = ball.style.top;
-
-                        frame.appendChild(ball);
-                        frame.appendChild(hitbox);
-        
-                        balls.push(ball);
-                        ballSpeeds.push({
-                            x: Math.random() * 1 - 0.5, // Random speed in X direction (-0.5 to 0.5)
-                            y: Math.random() * 1 - 0.5  // Random speed in Y direction (-0.5 to 0.5)
-                        });
-                    }, Math.random() * 5000); // Random delay up to 5 seconds
-                }
-
-                batch++;
-                if (batch * batchSize < imagePaths.length) {
-                    setTimeout(createBatch, 1000); // Следующая пачка через 1 секунду
-                }
-            }
-
-            createBatch();
-
-            setInterval(moveBalls, 1000 / 60); // Move balls at 60 frames per second
-        }
-
-        function moveBalls() {
-            const frame = document.getElementById('frame');
-
-            balls.forEach((ball, index) => {
-                let posX = parseFloat(ball.style.left);
-                let posY = parseFloat(ball.style.top);
-                const size = parseFloat(ball.style.width);
-
-                // Update position based on speed
-                posX += ballSpeeds[index].x * 0.1;
-                posY += ballSpeeds[index].y * 0.1;
-
-                // Check collision with frame boundaries
-                if (posX <= 0 || posX + size >= frame.clientWidth) {
-                    ballSpeeds[index].x *= -1; // Reverse X direction
-                    posX = Math.max(0, Math.min(frame.clientWidth - size, posX)); // Prevent sticking out
-                }
-                if (posY <= 0 || posY + size >= frame.clientHeight) {
-                    ballSpeeds[index].y *= -1; // Reverse Y direction
-                    posY = Math.max(0, Math.min(frame.clientHeight - size, posY)); // Prevent sticking out
-                }
-
-                // Update ball position
-                ball.style.left = `${posX}px`;
-                ball.style.top = `${posY}px`;
-
-                // Update hitbox position
-                const hitbox = ball.nextElementSibling;
-                hitbox.style.left = ball.style.left;
-                hitbox.style.top = ball.style.top;
-
-                // Check collisions with other balls
-                for (let i = 0; i < balls.length; i++) {
-                    if (i !== index) {
-                        const otherBall = balls[i];
-                        const otherHitbox = otherBall.nextElementSibling;
-
-                        // If hitboxes overlap, move the ball away from the other hitbox
-                        if (checkCollision(hitbox, otherHitbox)) {
-                            resolveCollision(ball, ballSpeeds[index], hitbox, otherBall, ballSpeeds[i], otherHitbox);
+            // Function to create balls with images and links
+            function createBall(sizeMultiplier, delay, imgSrc, link) {
+                setTimeout(() => {
+                    const ballSize = Math.min(frameWidth, frameHeight) / 10 * sizeMultiplier;
+                    const ball = Bodies.circle(Math.random() * frameWidth, 0, ballSize / 2, {
+                        restitution: 0.8,
+                        render: {
+                            fillStyle: 'transparent'
                         }
-                    }
-                }
-            });
-        }
+                    });
 
-        // Function to check initial position conflicts with other balls
-        function checkCollisionWithOtherBalls(posX, posY, size) {
-            for (let i = 0; i < balls.length; i++) {
-                const otherBall = balls[i];
-                const otherHitbox = otherBall.nextElementSibling;
+                    World.add(world, ball);
 
-                const otherPosX = parseFloat(otherBall.style.left);
-                const otherPosY = parseFloat(otherBall.style.top);
-                const otherSize = parseFloat(otherBall.style.width);
+                    // Create a div to represent the ball
+                    const ballDiv = document.createElement('div');
+                    ballDiv.classList.add('ball');
+                    ballDiv.style.width = `${ballSize}px`;
+                    ballDiv.style.height = `${ballSize}px`;
 
-                // Check if new ball's position conflicts with other ball's hitbox
-                if (
-                    posX + size >= otherPosX &&
-                    posX <= otherPosX + otherSize &&
-                    posY + size >= otherPosY &&
-                    posY <= otherPosY + otherSize
-                ) {
-                    return true;
-                }
+                    // Create an img element to hold the image
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    ballDiv.appendChild(img);
+
+                    // Wrap the ball div in an anchor element
+                    const linkElement = document.createElement('a');
+                    linkElement.href = link;
+                    linkElement.appendChild(ballDiv);
+
+                    // Position the ball div initially
+                    ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
+                    ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
+
+                    // Append the link element to the frame
+                    frame.appendChild(linkElement);
+
+                    // Update the position of the ball div on each engine update
+                    Events.on(engine, 'beforeUpdate', () => {
+                        ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
+                        ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
+                    });
+                }, delay);
             }
-            return false;
-        }
 
-        // Function to check collisions between hitbox elements
-        function checkCollision(hitbox1, hitbox2) {
-            const rect1 = hitbox1.getBoundingClientRect();
-            const rect2 = hitbox2.getBoundingClientRect();
-            return !(rect1.right < rect2.left ||
-                     rect1.left > rect2.right ||
-                     rect1.bottom < rect2.top ||
-                     rect1.top > rect2.bottom);
-        }
+            // Image sources and links
+            const images = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.png','23.png','24.png','25.png','26.png','27.png','28.png','29.png','30.png','31.png','32.png','33.png','34.png','35.png','36.png','37.png','38.png','39.png','40.png','41.png','42.png','43.png','44.png','45.png','46.png','47.png','48.png','49.png','50.png','51.png','52.png','53.png','54.png','55.png','56.png','57.png','58.png','59.png','60.png','61.png','62.png','63.png','64.png','65.png','66.png','67.png','68.png','69.png','70.png','71.png','72.png','73.png','74.png','75.png','76.png','77.png','78.png','79.png','80.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png'];
+            const links = ['https://t.me/drophuntergames_bot', 'https://t.me/BIRDTonBot', 'https://t.me/altooshka_bot', 'https://t.me/INTONSTELLAR_Bot', 'https://t.me/TaxiTONMint_bot', 'https://t.me/tondoombot', 'https://t.me/nmotongame', 'https://t.me/GHArenaBot', 'https://t.me/Hopsandbeer_bot', 'https://t.me/beetongamebot', 'https://t.me/clydetapbot', 'https://t.me/Demos_coin_bot', 'https://t.me/DiamoreCryptoBot', 'https://t.me/theHoldCoinBot', 'https://t.me/tonstationgames_bot', 'https://t.me/NotBoredPuppies_bot', 'https://t.me/brrrrrgamebot', 'https://t.me/NexWalletbot', 'https://t.me/CattonAiBot', 'https://t.me/mtkbossbot', 'https://t.me/Bodypump_app_bot', 'https://t.me/FastXParkingBot', 'https://t.me/AnonEarnBot', 'https://t.me/TimeFarmCryptoBot', 'https://t.me/flarexgamebot', 'https://t.me/gatto_gamebot', 'https://t.me/lizartsworld_bot', 'https://t.me/ScrooGgame_bot', 'https://t.me/preton_drop_bot', 'https://t.me/TryTONWalletBot', 'https://t.me/big_balls_birds_bot', 'https://t.me/StormTradeBot', 'https://t.me/cubesonthewater_bot', 'https://t.me/PunkCity2094bot', 'https://t.me/CaptainsBayBot', 'https://t.me/HamsterdamPlayBot', 'https://t.me/MemepolisBot', 'https://t.me/TimeTONbot', 'https://t.me/pixie_project_bot', 'https://t.me/TapCoinsBot', 'https://t.me/orbitonx_bot', 'https://t.me/BlumCryptoBot', 'https://t.me/whale', 'https://t.me/wordboox_bot', 'https://t.me/tonparty_bot', 'https://t.me/BBQCoin_bot', 'https://t.me/seed_coin_bot', 'https://t.me/DuckDrop_bot', 'https://t.me/pixel_wallet_bot', 'https://t.me/catizenbot', 'https://t.me/MemePoker_bot', 'https://t.me/Vertus_App_bot', 'https://t.me/dragonz_land_bot', 'https://t.me/CoinCryptoGameBot', 'https://t.me/XTap_Rays_bot', 'https://t.me/PIGCoinAI_bot', 'https://t.me/ZARGatesBot', 'https://t.me/true_coin_bot', 'https://t.me/QappiMinerBot', 'https://t.me/vorpaldao_bot', 'https://t.me/Apisgamebot', 'https://t.me/tonpumpapp_bot', 'https://t.me/GoldVerseBot', 'https://t.me/epickplaybot', 'https://t.me/rumble_bees_bot', 'https://t.me/potusclick_bot', 'https://t.me/wcoin_tapbot', 'https://t.me/Bcoin2048bot', 'https://t.me/Catapsbot', 'https://t.me/NOTMEMEAppBot', 'https://t.me/billiongems_bot', 'https://t.me/BFDCoin_bot', 'https://t.me/catidpawsbot', 'https://t.me/lama_airdrop_bot', 'https://t.me/musk_crypto_bot', 'https://t.me/tap_arena_bot', 'https://t.me/herewalletbot', 'https://t.me/EraOfExplorers_bot', 'https://t.me/TapRaccoonCoin_bot', 'https://t.me/tonchi_wallet_bot', 'https://t.me/fastmintapp_bot', 'https://t.me/TheTonMapBot', 'https://t.me/quackquack_game_bot', 'https://t.me/YesCoin_ebot', 'https://t.me/dormint_bot', 'https://t.me/Tomarket_ai_bot', 'https://t.me/virtualspaceapp_bot', 'https://t.me/ArtiTapBot', 'https://t.me/nikicoin_bot'];
 
-        // Handler for collisions between balls
-        function resolveCollision(ball1, speed1, hitbox1, ball2, speed2, hitbox2) {
-            // Placeholder collision resolution, swap speeds
-            const tempX = speed1.x;
-            const tempY = speed1.y;
-            speed1.x = speed2.x;
-            speed1.y = speed2.y;
-            speed2.x = tempX;
-            speed2.y = tempY;
-        }
+            // Create balls with random delays
+            const sizes = [1.0, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.0, 1.1, 1.3, 1.2, 1.3, 1.1, 1.0, 1.0, 1.0, 1.0, 1.1, 1.1, 1.7, 1.0, 1.0, 1.0, 1.0, 1.2, 1.0, 1.0, 1.0, 1.1, 1.1, 1.0, 1.0, 1.0, 1.1, 1.0, 1.3, 1.0, 3.5, 1.0, 1.0, 1.0, 1.4, 1.6, 1.0, 1.1, 1.8, 1.0, 1.4, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.0, 1.0, 1.0, 2.0, 1.1, 1.0, 1.2, 1.0, 1.2, 1.0, 1.0, 1.0, 1.0, 1.9, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.1, 1.1, 1.0, 1.0, 1.0];
+            sizes.forEach((size, index) => {
+                createBall(size, Math.random() * 2000, images[index], links[index]);
+            });
 
-        // Call function to create floating balls after images are loaded
-        createFloatingBalls();
-
+            // Run the engine
+            Engine.run(engine);
+        });
     </script>
 </body>
 </html>
