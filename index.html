@@ -601,94 +601,94 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const { Engine, Render, World, Bodies, Body, Events } = Matter;
+      document.addEventListener('DOMContentLoaded', () => {
+          const { Engine, Render, World, Bodies, Body, Events } = Matter;
+      
+          // Create an engine
+          const engine = Engine.create();
+          const world = engine.world;
+      
+          // Create a renderer
+          const frame = document.getElementById('frame');
+          const frameWidth = frame.clientWidth;
+          const frameHeight = frame.clientHeight;
+      
+          const render = Render.create({
+              element: frame,
+              engine: engine,
+              options: {
+                  width: frameWidth,
+                  height: frameHeight,
+                  wireframes: false,
+                  background: 'black'
+              }
+          });
         
-            // Create an engine
-            const engine = Engine.create();
-            const world = engine.world;
+          Render.run(render);
         
-            // Create a renderer
-            const frame = document.getElementById('frame');
-            const frameWidth = frame.clientWidth;
-            const frameHeight = frame.clientHeight;
+          // Add boundaries
+          const boundaries = [
+              Bodies.rectangle(frameWidth / 2, -5, frameWidth, 10, { isStatic: true }), // top
+              Bodies.rectangle(frameWidth / 2, frameHeight + 5, frameWidth, 10, { isStatic: true }), // bottom
+              Bodies.rectangle(-5, frameHeight / 2, 10, frameHeight, { isStatic: true }), // left
+              Bodies.rectangle(frameWidth + 5, frameHeight / 2, 10, frameHeight, { isStatic: true }) // right
+          ];
+          World.add(world, boundaries);
         
-            const render = Render.create({
-                element: frame,
-                engine: engine,
-                options: {
-                    width: frameWidth,
-                    height: frameHeight,
-                    wireframes: false,
-                    background: 'black'
-                }
-            });
-        
-            Render.run(render);
-        
-            // Add boundaries
-            const boundaries = [
-                Bodies.rectangle(frameWidth / 2, -5, frameWidth, 10, { isStatic: true }), // top
-                Bodies.rectangle(frameWidth / 2, frameHeight + 5, frameWidth, 10, { isStatic: true }), // bottom
-                Bodies.rectangle(-5, frameHeight / 2, 10, frameHeight, { isStatic: true }), // left
-                Bodies.rectangle(frameWidth + 5, frameHeight / 2, 10, frameHeight, { isStatic: true }) // right
-            ];
-            World.add(world, boundaries);
-        
-            // Function to create balls with images and links
-            function createBall(sizeMultiplier, imgSrc, link) {
-                const delay = Math.random() * 5000 + 1000; // 500 ms to 3000 ms
-            
-                setTimeout(() => {
-                    const ballSize = Math.min(frameWidth, frameHeight) / 10 * sizeMultiplier;
-                    const ballRadius = ballSize / 2;
-                    const expandedRadius = ballRadius + 3; // Expand the hitbox by 3 pixels
+          // Function to create balls with images and links
+          function createBall(sizeMultiplier, imgSrc, link) {
+              const delay = Math.random() * 5000 + 1000; // 1000 ms to 6000 ms
+          
+              setTimeout(() => {
+                  const ballSize = Math.min(frameWidth, frameHeight) / 10 * sizeMultiplier;
+                  const ballRadius = ballSize / 2;
+                  const expandedRadius = ballRadius + 3; // Expand the hitbox by 3 pixels
+              
+                  const startX = Math.random() * (frameWidth - 2 * expandedRadius) + expandedRadius;
+                  const startY = Math.random() * (frameHeight * 0.2 - 2 * expandedRadius) + expandedRadius; // Ensure balls appear at the top 20% of the frame
+              
+                  const ball = Bodies.circle(startX, startY, expandedRadius, {
+                      restitution: 0.8,
+                      render: {
+                          fillStyle: 'transparent'
+                      },
+                      collisionFilter: {
+                          group: Body.nextGroup(true) // Ensure each ball has a unique collision group
+                      }
+                  });
                 
-                    const startX = Math.random() * (frameWidth - 2 * expandedRadius) + expandedRadius;
-                    const startY = Math.random() * (frameHeight * 0.2 - 2 * expandedRadius) + expandedRadius; // Ensure balls appear at the top 20% of the frame
+                  World.add(world, ball);
                 
-                    const ball = Bodies.circle(startX, startY, expandedRadius, {
-                        restitution: 0.8,
-                        render: {
-                            fillStyle: 'transparent'
-                        },
-                        collisionFilter: {
-                            group: Body.nextGroup(true) // Ensure each ball has a unique collision group
-                        }
-                    });
+                  // Create a div to represent the ball
+                  const ballDiv = document.createElement('div');
+                  ballDiv.classList.add('ball');
+                  ballDiv.style.width = `${ballSize}px`;
+                  ballDiv.style.height = `${ballSize}px`;
                 
-                    World.add(world, ball);
+                  // Create an img element to hold the image
+                  const img = document.createElement('img');
+                  img.src = imgSrc;
+                  ballDiv.appendChild(img);
                 
-                    // Create a div to represent the ball
-                    const ballDiv = document.createElement('div');
-                    ballDiv.classList.add('ball');
-                    ballDiv.style.width = `${ballSize}px`;
-                    ballDiv.style.height = `${ballSize}px`;
+                  // Wrap the ball div in an anchor element
+                  const linkElement = document.createElement('a');
+                  linkElement.href = link;
+                  linkElement.appendChild(ballDiv);
                 
-                    // Create an img element to hold the image
-                    const img = document.createElement('img');
-                    img.src = imgSrc;
-                    ballDiv.appendChild(img);
+                  // Position the ball div initially
+                  ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
+                  ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
                 
-                    // Wrap the ball div in an anchor element
-                    const linkElement = document.createElement('a');
-                    linkElement.href = link;
-                    linkElement.appendChild(ballDiv);
+                  // Append the link element to the frame
+                  frame.appendChild(linkElement);
                 
-                    // Position the ball div initially
-                    ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
-                    ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
-                
-                    // Append the link element to the frame
-                    frame.appendChild(linkElement);
-                
-                    // Update the position of the ball div on each engine update
-                    Events.on(engine, 'beforeUpdate', () => {
-                        ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
-                        ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
-                    });
-                }, delay);
-            }
+                  // Update the position of the ball div on each engine update
+                  Events.on(engine, 'beforeUpdate', () => {
+                      ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
+                      ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
+                  });
+              }, delay);
+          }
         
             // Image sources, links, and sizes
             const images = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.png','23.png','24.png','25.png','26.png','27.png','28.png','29.png','30.png','31.png','32.png','33.png','34.png','35.png','36.png','37.png','38.png','39.png','40.png','41.png','42.png','43.png','44.png','45.png','46.png','47.png','48.png','49.png','50.png','51.png','52.png','53.png','54.png','55.png','56.png','57.png','58.png','59.png','60.png','61.png','62.png','63.png','64.png','65.png','66.png','67.png','68.png','69.png','70.png','71.png','72.png','73.png','74.png','75.png','76.png','77.png','78.png','79.png','80.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png'];
@@ -699,7 +699,7 @@
             
             let imagesLoaded = 0;
             const totalImages = images.length;
-        
+                
             function imageLoaded() {
                 imagesLoaded++;
                 const percentage = Math.round((imagesLoaded / totalImages) * 100);
@@ -710,17 +710,16 @@
                     Engine.run(engine);
                 }
             }
-        
-            // Load all images and create balls
+          
+            // Load all images
             images.forEach((imgSrc, index) => {
                 const img = new Image();
                 img.src = imgSrc;
                 img.onload = imageLoaded;
                 img.onerror = imageLoaded; // Ensure it still increments even if an image fails to load
-                createBall(sizes[index], imgSrc, links[index]); // Use size multiplier from sizes array
+                createBall(sizes[index], imgSrc, links[index]); // Create balls with different sizes
             });
         });
-
     </script>
 </body>
 </html>
