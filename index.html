@@ -9,10 +9,11 @@
             margin: 0;
             padding: 0;
             height: 100vh;
-            background-color: black;
+            background-color: rgb(0, 0, 0);
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         .frame {
@@ -22,7 +23,6 @@
             border: 2px solid gray;
             margin-top: 100px;
             position: relative;
-            overflow: hidden;
         }
 
         .ball {
@@ -33,17 +33,569 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            border: 1px solid rgb(43, 43, 43);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
+
+        .ball:hover {
+            border-color: white;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); /* Белое свечение */
+        }
+
 
         .ball img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
+        .hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 25px; /* 25 pixels from the top */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            z-index: 10;
+        }
+
+        .hero {
+            color: rgb(255, 255, 255);
+            font-size: clamp(1rem, 5vw, 3rem); /* Размер шрифта будет от 1rem до 3rem, в зависимости от ширины экрана */
+            text-align: center;
+            position: relative;
+            white-space: nowrap; /* Запрещаем перенос текста */
+        }
+
+        h1,
+        h2 {
+          margin: 0;
+        }
+
+        a {
+          color: #ccc;
+        }
+
+        section {
+          padding: 20px;
+        }
+
+        .demo {
+          height: 100px;
+          background: #fff;
+        }
+
+        .layers {
+          position: relative;
+        }
+
+        .layers::before,
+        .layers::after {
+          content: attr(data-text);
+          position: absolute;
+          width: 110%;
+          z-index: -1;
+        }
+
+        .layers::before {
+          top: 10px;
+          left: 15px;
+          color: #e0287d;
+        }
+
+        .layers::after {
+          top: 5px;
+          left: -10px;
+          color: #1bc7fb;
+        }
+
+        .single-path {
+          clip-path: polygon(
+            0% 12%,
+            53% 12%,
+            53% 26%,
+            25% 26%,
+            25% 86%,
+            31% 86%,
+            31% 0%,
+            53% 0%,
+            53% 84%,
+            92% 84%,
+            92% 82%,
+            70% 82%,
+            70% 29%,
+            78% 29%,
+            78% 65%,
+            69% 65%,
+            69% 66%,
+            77% 66%,
+            77% 45%,
+            85% 45%,
+            85% 26%,
+            97% 26%,
+            97% 28%,
+            84% 28%,
+            84% 34%,
+            54% 34%,
+            54% 89%,
+            30% 89%,
+            30% 58%,
+            83% 58%,
+            83% 5%,
+            68% 5%,
+            68% 36%,
+            62% 36%,
+            62% 1%,
+            12% 1%,
+            12% 34%,
+            60% 34%,
+            60% 57%,
+            98% 57%,
+            98% 83%,
+            1% 83%,
+            1% 53%,
+            91% 53%,
+            91% 84%,
+            8% 84%,
+            8% 83%,
+            4% 83%
+          );
+        }
+
+        .paths {
+          animation: paths 5s step-end infinite;
+        }
+
+        @keyframes paths {
+          0% {
+            clip-path: polygon(
+              0% 43%,
+              83% 43%,
+              83% 22%,
+              23% 22%,
+              23% 24%,
+              91% 24%,
+              91% 26%,
+              18% 26%,
+              18% 83%,
+              29% 83%,
+              29% 17%,
+              41% 17%,
+              41% 39%,
+              18% 39%,
+              18% 82%,
+              54% 82%,
+              54% 88%,
+              19% 88%,
+              19% 4%,
+              39% 4%,
+              39% 14%,
+              76% 14%,
+              76% 52%,
+              23% 52%,
+              23% 35%,
+              19% 35%,
+              19% 8%,
+              36% 8%,
+              36% 31%,
+              73% 31%,
+              73% 16%,
+              1% 16%,
+              1% 56%,
+              50% 56%,
+              50% 8%
+            );
+          }
+      
+          5% {
+            clip-path: polygon(
+              0% 29%,
+              44% 29%,
+              44% 83%,
+              94% 83%,
+              94% 56%,
+              11% 56%,
+              11% 64%,
+              94% 64%,
+              94% 70%,
+              88% 70%,
+              88% 32%,
+              18% 32%,
+              18% 96%,
+              10% 96%,
+              10% 62%,
+              9% 62%,
+              9% 84%,
+              68% 84%,
+              68% 50%,
+              52% 50%,
+              52% 55%,
+              35% 55%,
+              35% 87%,
+              25% 87%,
+              25% 39%,
+              15% 39%,
+              15% 88%,
+              52% 88%
+            );
+          }
+      
+          30% {
+            clip-path: polygon(
+              0% 53%,
+              93% 53%,
+              93% 62%,
+              68% 62%,
+              68% 37%,
+              97% 37%,
+              97% 89%,
+              13% 89%,
+              13% 45%,
+              51% 45%,
+              51% 88%,
+              17% 88%,
+              17% 54%,
+              81% 54%,
+              81% 75%,
+              79% 75%,
+              79% 76%,
+              38% 76%,
+              38% 28%,
+              61% 28%,
+              61% 12%,
+              55% 12%,
+              55% 62%,
+              68% 62%,
+              68% 51%,
+              0% 51%,
+              0% 92%,
+              63% 92%,
+              63% 4%,
+              65% 4%
+            );
+          }
+      
+          45% {
+            clip-path: polygon(
+              0% 33%,
+              2% 33%,
+              2% 69%,
+              58% 69%,
+              58% 94%,
+              55% 94%,
+              55% 25%,
+              33% 25%,
+              33% 85%,
+              16% 85%,
+              16% 19%,
+              5% 19%,
+              5% 20%,
+              79% 20%,
+              79% 96%,
+              93% 96%,
+              93% 50%,
+              5% 50%,
+              5% 74%,
+              55% 74%,
+              55% 57%,
+              96% 57%,
+              96% 59%,
+              87% 59%,
+              87% 65%,
+              82% 65%,
+              82% 39%,
+              63% 39%,
+              63% 92%,
+              4% 92%,
+              4% 36%,
+              24% 36%,
+              24% 70%,
+              1% 70%,
+              1% 43%,
+              15% 43%,
+              15% 28%,
+              23% 28%,
+              23% 71%,
+              90% 71%,
+              90% 86%,
+              97% 86%,
+              97% 1%,
+              60% 1%,
+              60% 67%,
+              71% 67%,
+              71% 91%,
+              17% 91%,
+              17% 14%,
+              39% 14%,
+              39% 30%,
+              58% 30%,
+              58% 11%,
+              52% 11%,
+              52% 83%,
+              68% 83%
+            );
+          }
+      
+          76% {
+            clip-path: polygon(
+              0% 26%,
+              15% 26%,
+              15% 73%,
+              72% 73%,
+              72% 70%,
+              77% 70%,
+              77% 75%,
+              8% 75%,
+              8% 42%,
+              4% 42%,
+              4% 61%,
+              17% 61%,
+              17% 12%,
+              26% 12%,
+              26% 63%,
+              73% 63%,
+              73% 43%,
+              90% 43%,
+              90% 67%,
+              50% 67%,
+              50% 41%,
+              42% 41%,
+              42% 46%,
+              50% 46%,
+              50% 84%,
+              96% 84%,
+              96% 78%,
+              49% 78%,
+              49% 25%,
+              63% 25%,
+              63% 14%
+            );
+          }
+      
+          90% {
+            clip-path: polygon(
+              0% 41%,
+              13% 41%,
+              13% 6%,
+              87% 6%,
+              87% 93%,
+              10% 93%,
+              10% 13%,
+              89% 13%,
+              89% 6%,
+              3% 6%,
+              3% 8%,
+              16% 8%,
+              16% 79%,
+              0% 79%,
+              0% 99%,
+              92% 99%,
+              92% 90%,
+              5% 90%,
+              5% 60%,
+              0% 60%,
+              0% 48%,
+              89% 48%,
+              89% 13%,
+              80% 13%,
+              80% 43%,
+              95% 43%,
+              95% 19%,
+              80% 19%,
+              80% 85%,
+              38% 85%,
+              38% 62%
+            );
+          }
+      
+          1%,
+          7%,
+          33%,
+          47%,
+          78%,
+          93% {
+            clip-path: none;
+          }
+        }
+
+        .movement {
+          /* Normally this position would be absolute & on the layers, set to relative here so we can see it on the div */
+          position: relative;
+          animation: movement 8s step-end infinite;
+        }
+
+        @keyframes movement {
+          0% {
+            top: 0px;
+            left: -20px;
+          }
+      
+          15% {
+            top: 10px;
+            left: 10px;
+          }
+      
+          60% {
+            top: 5px;
+            left: -10px;
+          }
+      
+          75% {
+            top: -5px;
+            left: 20px;
+          }
+      
+          100% {
+            top: 10px;
+            left: 5px;
+          }
+        }
+
+        .opacity {
+          animation: opacity 5s step-end infinite;
+        }
+
+        @keyframes opacity {
+          0% {
+            opacity: 0.1;
+          }
+      
+          5% {
+            opacity: 0.7;
+          }
+      
+          30% {
+            opacity: 0.4;
+          }
+      
+          45% {
+            opacity: 0.6;
+          }
+      
+          76% {
+            opacity: 0.4;
+          }
+      
+          90% {
+            opacity: 0.8;
+          }
+      
+          1%,
+          7%,
+          33%,
+          47%,
+          78%,
+          93% {
+            opacity: 0;
+          }
+        }
+
+        .font {
+          animation: font 7s step-end infinite;
+        }
+
+        @keyframes font {
+          0% {
+            font-weight: 100;
+            color: #e0287d;
+            filter: blur(3px);
+          }
+      
+          20% {
+            font-weight: 500;
+            color: #fff;
+            filter: blur(0);
+          }
+      
+          50% {
+            font-weight: 300;
+            color: #1bc7fb;
+            filter: blur(2px);
+          }
+      
+          60% {
+            font-weight: 700;
+            color: #fff;
+            filter: blur(0);
+          }
+      
+          90% {
+            font-weight: 500;
+            color: #e0287d;
+            filter: blur(6px);
+          }
+        }
+
+        .glitch span {
+          animation: paths 5s step-end infinite;
+        }
+
+        .glitch::before {
+          animation: paths 5s step-end infinite, opacity 5s step-end infinite,
+            font 8s step-end infinite, movement 10s step-end infinite;
+        }
+
+        .glitch::after {
+          animation: paths 5s step-end infinite, opacity 5s step-end infinite,
+            font 7s step-end infinite, movement 8s step-end infinite;
+        }
+        #loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #loading-bar {
+            width: 80%;
+            height: 30px;
+            background-color: gray;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        #loading-bar::before {
+            content: '';
+            display: block;
+            width: 0;
+            height: 100%;
+            background-color: white;
+            animation: loading-animation 5s linear infinite;
+        }
+
+        @keyframes loading-animation {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        #loading-text {
+            color: white;
+            margin-top: 10px;
+            font-size: 1.5rem;
+        }
+
     </style>
 </head>
 <body>
+    <div id="loading-container">
+        <div id="loading-bar"></div>
+        <div id="loading-text">0%</div>
+    </div>    
+    <div class="hero-container">
+        <div class="environment"></div>
+        <h2 class="hero glitch layers" data-text="To Be Developed, To Be Done - TBD"><span>To Be Developed, To Be Done - TBD</span></h2>
+    </div>
     <div class="frame" id="frame"></div>
+</body>
 
     <!-- Matter.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
@@ -51,16 +603,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const { Engine, Render, World, Bodies, Body, Events } = Matter;
-
+        
             // Create an engine
             const engine = Engine.create();
             const world = engine.world;
-
+        
             // Create a renderer
             const frame = document.getElementById('frame');
             const frameWidth = frame.clientWidth;
             const frameHeight = frame.clientHeight;
-
+        
             const render = Render.create({
                 element: frame,
                 engine: engine,
@@ -71,54 +623,65 @@
                     background: 'black'
                 }
             });
-
+        
             Render.run(render);
-
+        
             // Add boundaries
             const boundaries = [
-                Bodies.rectangle(frameWidth / 2, 0, frameWidth, 10, { isStatic: true }), // top
-                Bodies.rectangle(frameWidth / 2, frameHeight, frameWidth, 10, { isStatic: true }), // bottom
-                Bodies.rectangle(0, frameHeight / 2, 10, frameHeight, { isStatic: true }), // left
-                Bodies.rectangle(frameWidth, frameHeight / 2, 10, frameHeight, { isStatic: true }) // right
+                Bodies.rectangle(frameWidth / 2, -5, frameWidth, 10, { isStatic: true }), // top
+                Bodies.rectangle(frameWidth / 2, frameHeight + 5, frameWidth, 10, { isStatic: true }), // bottom
+                Bodies.rectangle(-5, frameHeight / 2, 10, frameHeight, { isStatic: true }), // left
+                Bodies.rectangle(frameWidth + 5, frameHeight / 2, 10, frameHeight, { isStatic: true }) // right
             ];
             World.add(world, boundaries);
-
+        
             // Function to create balls with images and links
-            function createBall(sizeMultiplier, delay, imgSrc, link) {
+            function createBall(sizeMultiplier, imgSrc, link) {
+                const delay = Math.random() * 5000 + 1000; // 500 ms to 3000 ms
+            
                 setTimeout(() => {
                     const ballSize = Math.min(frameWidth, frameHeight) / 10 * sizeMultiplier;
-                    const ball = Bodies.circle(Math.random() * frameWidth, 0, ballSize / 2, {
+                    const ballRadius = ballSize / 2;
+                    const expandedRadius = ballRadius + 3; // Expand the hitbox by 3 pixels
+                
+                    const startX = Math.random() * (frameWidth - 2 * expandedRadius) + expandedRadius;
+                    const startY = Math.random() * (frameHeight * 0.2 - 2 * expandedRadius) + expandedRadius; // Ensure balls appear at the top 20% of the frame
+                
+                    const ball = Bodies.circle(startX, startY, expandedRadius, {
                         restitution: 0.8,
                         render: {
                             fillStyle: 'transparent'
+                        },
+                        collisionFilter: {
+                            group: Body.nextGroup(true) // Ensure each ball has a unique collision group
                         }
                     });
-
+                
                     World.add(world, ball);
-
+                
                     // Create a div to represent the ball
                     const ballDiv = document.createElement('div');
                     ballDiv.classList.add('ball');
                     ballDiv.style.width = `${ballSize}px`;
                     ballDiv.style.height = `${ballSize}px`;
-
+                
                     // Create an img element to hold the image
                     const img = document.createElement('img');
                     img.src = imgSrc;
                     ballDiv.appendChild(img);
-
+                
                     // Wrap the ball div in an anchor element
                     const linkElement = document.createElement('a');
                     linkElement.href = link;
                     linkElement.appendChild(ballDiv);
-
+                
                     // Position the ball div initially
                     ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
                     ballDiv.style.top = `${ball.position.y - ballSize / 2}px`;
-
+                
                     // Append the link element to the frame
                     frame.appendChild(linkElement);
-
+                
                     // Update the position of the ball div on each engine update
                     Events.on(engine, 'beforeUpdate', () => {
                         ballDiv.style.left = `${ball.position.x - ballSize / 2}px`;
@@ -126,20 +689,38 @@
                     });
                 }, delay);
             }
-
-            // Image sources and links
+        
+            // Image sources, links, and sizes
             const images = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png','9.png','10.png','11.png','12.png','13.png','14.png','15.png','16.png','17.png','18.png','19.png','20.png','21.png','22.png','23.png','24.png','25.png','26.png','27.png','28.png','29.png','30.png','31.png','32.png','33.png','34.png','35.png','36.png','37.png','38.png','39.png','40.png','41.png','42.png','43.png','44.png','45.png','46.png','47.png','48.png','49.png','50.png','51.png','52.png','53.png','54.png','55.png','56.png','57.png','58.png','59.png','60.png','61.png','62.png','63.png','64.png','65.png','66.png','67.png','68.png','69.png','70.png','71.png','72.png','73.png','74.png','75.png','76.png','77.png','78.png','79.png','80.png','81.png','82.png','83.png','84.png','85.png','86.png','87.png','88.png','89.png'];
             const links = ['https://t.me/drophuntergames_bot', 'https://t.me/BIRDTonBot', 'https://t.me/altooshka_bot', 'https://t.me/INTONSTELLAR_Bot', 'https://t.me/TaxiTONMint_bot', 'https://t.me/tondoombot', 'https://t.me/nmotongame', 'https://t.me/GHArenaBot', 'https://t.me/Hopsandbeer_bot', 'https://t.me/beetongamebot', 'https://t.me/clydetapbot', 'https://t.me/Demos_coin_bot', 'https://t.me/DiamoreCryptoBot', 'https://t.me/theHoldCoinBot', 'https://t.me/tonstationgames_bot', 'https://t.me/NotBoredPuppies_bot', 'https://t.me/brrrrrgamebot', 'https://t.me/NexWalletbot', 'https://t.me/CattonAiBot', 'https://t.me/mtkbossbot', 'https://t.me/Bodypump_app_bot', 'https://t.me/FastXParkingBot', 'https://t.me/AnonEarnBot', 'https://t.me/TimeFarmCryptoBot', 'https://t.me/flarexgamebot', 'https://t.me/gatto_gamebot', 'https://t.me/lizartsworld_bot', 'https://t.me/ScrooGgame_bot', 'https://t.me/preton_drop_bot', 'https://t.me/TryTONWalletBot', 'https://t.me/big_balls_birds_bot', 'https://t.me/StormTradeBot', 'https://t.me/cubesonthewater_bot', 'https://t.me/PunkCity2094bot', 'https://t.me/CaptainsBayBot', 'https://t.me/HamsterdamPlayBot', 'https://t.me/MemepolisBot', 'https://t.me/TimeTONbot', 'https://t.me/pixie_project_bot', 'https://t.me/TapCoinsBot', 'https://t.me/orbitonx_bot', 'https://t.me/BlumCryptoBot', 'https://t.me/whale', 'https://t.me/wordboox_bot', 'https://t.me/tonparty_bot', 'https://t.me/BBQCoin_bot', 'https://t.me/seed_coin_bot', 'https://t.me/DuckDrop_bot', 'https://t.me/pixel_wallet_bot', 'https://t.me/catizenbot', 'https://t.me/MemePoker_bot', 'https://t.me/Vertus_App_bot', 'https://t.me/dragonz_land_bot', 'https://t.me/CoinCryptoGameBot', 'https://t.me/XTap_Rays_bot', 'https://t.me/PIGCoinAI_bot', 'https://t.me/ZARGatesBot', 'https://t.me/true_coin_bot', 'https://t.me/QappiMinerBot', 'https://t.me/vorpaldao_bot', 'https://t.me/Apisgamebot', 'https://t.me/tonpumpapp_bot', 'https://t.me/GoldVerseBot', 'https://t.me/epickplaybot', 'https://t.me/rumble_bees_bot', 'https://t.me/potusclick_bot', 'https://t.me/wcoin_tapbot', 'https://t.me/Bcoin2048bot', 'https://t.me/Catapsbot', 'https://t.me/NOTMEMEAppBot', 'https://t.me/billiongems_bot', 'https://t.me/BFDCoin_bot', 'https://t.me/catidpawsbot', 'https://t.me/lama_airdrop_bot', 'https://t.me/musk_crypto_bot', 'https://t.me/tap_arena_bot', 'https://t.me/herewalletbot', 'https://t.me/EraOfExplorers_bot', 'https://t.me/TapRaccoonCoin_bot', 'https://t.me/tonchi_wallet_bot', 'https://t.me/fastmintapp_bot', 'https://t.me/TheTonMapBot', 'https://t.me/quackquack_game_bot', 'https://t.me/YesCoin_ebot', 'https://t.me/dormint_bot', 'https://t.me/Tomarket_ai_bot', 'https://t.me/virtualspaceapp_bot', 'https://t.me/ArtiTapBot', 'https://t.me/nikicoin_bot'];
 
             // Create balls with random delays
             const sizes = [1.0, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.0, 1.1, 1.3, 1.2, 1.3, 1.1, 1.0, 1.0, 1.0, 1.0, 1.1, 1.1, 1.7, 1.0, 1.0, 1.0, 1.0, 1.2, 1.0, 1.0, 1.0, 1.1, 1.1, 1.0, 1.0, 1.0, 1.1, 1.0, 1.3, 1.0, 3.5, 1.0, 1.0, 1.0, 1.4, 1.6, 1.0, 1.1, 1.8, 1.0, 1.4, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.0, 1.0, 1.0, 2.0, 1.1, 1.0, 1.2, 1.0, 1.2, 1.0, 1.0, 1.0, 1.0, 1.9, 1.1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.1, 1.1, 1.1, 1.0, 1.0, 1.0];
-            sizes.forEach((size, index) => {
-                createBall(size, Math.random() * 2000, images[index], links[index]);
+            
+            let imagesLoaded = 0;
+            const totalImages = images.length;
+        
+            function imageLoaded() {
+                imagesLoaded++;
+                const percentage = Math.round((imagesLoaded / totalImages) * 100);
+                document.getElementById('loading-text').textContent = `${percentage}%`;
+            
+                if (imagesLoaded === totalImages) {
+                    document.getElementById('loading-container').style.display = 'none';
+                    Engine.run(engine);
+                }
+            }
+        
+            // Load all images and create balls
+            images.forEach((imgSrc, index) => {
+                const img = new Image();
+                img.src = imgSrc;
+                img.onload = imageLoaded;
+                img.onerror = imageLoaded; // Ensure it still increments even if an image fails to load
+                createBall(sizes[index], imgSrc, links[index]); // Use size multiplier from sizes array
             });
-
-            // Run the engine
-            Engine.run(engine);
         });
+
     </script>
 </body>
 </html>
